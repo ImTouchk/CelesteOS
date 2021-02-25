@@ -15,9 +15,11 @@ start:
 
     ; call _init
 
+    cli
     lgdt [gdt64.pointer]
+    sti
     jmp gdt64.code_segment:long_mode_start
-    
+
     hlt
 
 setup_page_tables:
@@ -129,6 +131,15 @@ gdt64:
     dq 0 ; zero entry
     .code_segment: equ $ - gdt64
         dq (1 << 43) | (1 << 44) | (1 << 47) | (1 << 53) ; code segment
+    .segment:
+        dw 0FFFFh
+        dw 0
+        
+        db 0
+        db 10010010b
+        db 11001111b
+        db 0
+
     .pointer:
         dw $ - gdt64 - 1 ; length
         dq gdt64         ; address 

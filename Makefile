@@ -1,7 +1,7 @@
-LD := ${HOME}/opt/cross/bin/x86_64-elf-ld
+LD  := ${HOME}/opt/cross/bin/x86_64-elf-ld
 GCC := ${HOME}/opt/cross/bin/x86_64-elf-gcc
 
-CFLAGS := -ffreestanding -O2 -Wall -Wextra
+CFLAGS      := -ffreestanding -O2 -Wall -Wextra
 INC_FOLDERS := src/intf
 
 KERNEL_SRC := $(shell find src/kernel -name *.c)
@@ -26,4 +26,3 @@ build-x86_64: $(KERNEL_OBJ) $(OBJ_FILES)
 	${LD} -n -o temp/kernel.bin -T targets/linker.ld $(KERNEL_OBJ) $(OBJ_FILES)
 	cp temp/kernel.bin targets/boot/kernel.bin
 	grub-mkrescue /usr/lib/grub/i386-pc -o targets/kernel.iso targets/
-	rm temp/* -r
