@@ -1,5 +1,5 @@
 bin/
-bootloader/temp/
-kernel/temp/
+bootloader/.temp/
+kernel/.temp/
 .vscode/
 
