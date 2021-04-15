@@ -18,14 +18,6 @@ struct ScreenBuffer {
     UINT32 pxPerScanline;
 };
 
-struct BootData {
-    struct ScreenBuffer* pScreenBuffer;
-    void* pSystemFont;
-    void* pMemoryMap;
-    UINT64 memoryMapSize;
-    UINT64 memoryMapDescSize;
-};
-
 struct PSF1_HEADER {
     UINT8 magic[2];
     UINT8 mode;
@@ -35,6 +27,18 @@ struct PSF1_HEADER {
 struct PSF1_FONT {
     struct PSF1_HEADER* pHeader;
     void* pGlyphBuffer;
+};
+
+struct MemoryMap {
+    void* pData;
+    UINT64 size;
+    UINT64 descSize;
+};
+
+struct BootData {
+    struct ScreenBuffer* pScreenBuffer;
+    struct PSF1_FONT* pSystemFont;
+    struct MemoryMap memoryMap;
 };
 
 EFI_FILE* LoadFile(
@@ -51,8 +55,7 @@ struct PSF1_FONT* LoadFont(
     __IN__ EFI_SYSTEM_TABLE* SystemTable
 );
 
-struct BootData* InitializeScreen(
-    __IN__ EFI_HANDLE* ImageHandle,
+struct ScreenBuffer* InitializeScreen(
     __IN__ EFI_SYSTEM_TABLE* SystemTable
 );
 

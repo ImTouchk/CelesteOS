@@ -19,6 +19,7 @@ struct PSF1_FONT* LoadFont(
 
     FontFile = LoadFile(Directory, Path, ImageHandle, SystemTable);
     if(FontFile == NULL) {
+        FatalError(L"Could not load the system font file.\r\n");
         return NULL;
     }
 
@@ -33,6 +34,7 @@ struct PSF1_FONT* LoadFont(
 
     if(FontHeader->magic[0] != PSF1_MAGIC0 ||
        FontHeader->magic[1] != PSF1_MAGIC1) {
+        FatalError(L"Invalid system font version.\r\n");
         return NULL;
     }
 
@@ -57,5 +59,7 @@ struct PSF1_FONT* LoadFont(
 
     Font->pHeader      = FontHeader;
     Font->pGlyphBuffer = Buffer;
+
+    SimplePrint(L"System font loaded.\r\n");
     return Font;
 }

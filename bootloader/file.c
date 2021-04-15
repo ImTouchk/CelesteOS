@@ -39,8 +39,9 @@ EFI_FILE* LoadFile(
         EFI_FILE_READ_ONLY
     );
 
-    if(EFI_ERROR(Status))
+    if(EFI_ERROR(Status)) {
         return NULL;
+    }
 
     return File;
 }
