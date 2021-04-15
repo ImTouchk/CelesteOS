@@ -59,6 +59,12 @@ struct ScreenBuffer* InitializeScreen(
     __IN__ EFI_SYSTEM_TABLE* SystemTable
 );
 
+struct MemoryMap LoadMemoryInfo(
+    __IN__ EFI_HANDLE* ImageHandle,
+    __IN__ EFI_SYSTEM_TABLE* SystemTable,
+    __OUT__ UINT64* MemoryMapKey
+);
+
 void InitializePrint(
     __IN__ EFI_HANDLE* ImageHandle,
     __IN__ EFI_SYSTEM_TABLE* SystemTable

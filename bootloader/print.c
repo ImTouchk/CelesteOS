@@ -21,5 +21,8 @@ void FatalError(CHAR16* Message)
 {
     SimplePrint(Message);
     SimplePrint(L"Execution stopped.\r\n");
-    asm ("hlt");
+    for(;;) {
+        asm("cli");
+        asm("hlt");
+    }
 }
