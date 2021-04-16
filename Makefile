@@ -10,7 +10,9 @@ setup:
 
 all:
 	cd bootloader && make all
+	cd kernel     && make all
 	mcopy -o -i ${IMAGE_FILE} bin/BOOTX64.EFI ::/EFI/BOOT
+	mcopy -o -i ${IMAGE_FILE} bin/kernel.elf  ::
 
 clean:
 	rm bootloader/.temp/
