@@ -76,6 +76,7 @@ VOID InitializePrint(
     __IN__ EFI_SYSTEM_TABLE* SystemTable
 );
 
+VOID SimplePrintUInt(__IN__ UINTN Number);
 VOID SimplePrint(__IN__ CHAR16* Message);
 VOID FatalError(__IN__ CHAR16* Message);
 
