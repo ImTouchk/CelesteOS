@@ -65,12 +65,18 @@ struct MemoryMap LoadMemoryInfo(
     __OUT__ UINT64* MemoryMapKey
 );
 
-void InitializePrint(
+VOID LoadBinary(
+    __IN__ EFI_HANDLE* ImageHandle,
+    __IN__ EFI_SYSTEM_TABLE* SystemTable,
+    __IN__ EFI_FILE* File
+);
+
+VOID InitializePrint(
     __IN__ EFI_HANDLE* ImageHandle,
     __IN__ EFI_SYSTEM_TABLE* SystemTable
 );
 
-void SimplePrint(__IN__ CHAR16* Message);
-void FatalError(__IN__ CHAR16* Message);
+VOID SimplePrint(__IN__ CHAR16* Message);
+VOID FatalError(__IN__ CHAR16* Message);
 
 #endif // BOOTLOADER_H

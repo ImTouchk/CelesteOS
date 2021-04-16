@@ -14,8 +14,6 @@ EFI_STATUS efi_main(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE* SystemTable)
     SystemTable->ConOut->ClearScreen(SystemTable->ConOut);
 
     InitializePrint(&ImageHandle, SystemTable);
-    
-    FatalError(L"is this working?\r\n");
 
     KernelData.pSystemFont = LoadFont(
         NULL,
@@ -36,6 +34,14 @@ EFI_STATUS efi_main(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE* SystemTable)
 
     SimplePrint(L"Loading the kernel...\r\n");
     SimplePrint(L"Leaving the UEFI environment...\r\n");
+
+    LoadBinary(
+        &ImageHandle, 
+        SystemTable,
+        LoadFile(NULL, L"kernel.elf", &ImageHandle, SystemTable)
+    );
+
+    SimplePrint(L"Exitted KernelMain.\r\n");
 
     do { Status = SystemTable->ConIn->ReadKeyStroke(SystemTable->ConIn, &Key); }
     while(Status == EFI_NOT_READY);
