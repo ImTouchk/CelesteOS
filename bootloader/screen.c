@@ -16,14 +16,15 @@ struct ScreenBuffer* InitializeScreen(
     UINTN                                 InfoSize;
     EFI_GUID GopGUID = EFI_GRAPHICS_OUTPUT_PROTOCOL_GUID;
 
-    Status  = BootServices->LocateProtocol(
+    Status = BootServices->LocateProtocol(
         &GopGUID,
         NULL,
         (void**)&GOP
     );
 
-    if(EFI_ERROR(Status))
-        return NULL;
+    if(EFI_ERROR(Status)) {
+        FatalError(L"Couldn't locate the screen buffer.\r\n");
+    }
 
     Status = GOP->QueryMode(
         GOP, 
@@ -36,7 +37,6 @@ struct ScreenBuffer* InitializeScreen(
         Status = GOP->SetMode(GOP, 0);
         if(EFI_ERROR(Status)) {
             FatalError(L"Failed to initialize the screen buffer.\r\n");
-            return NULL;
         }
     }
 
@@ -49,7 +49,6 @@ struct ScreenBuffer* InitializeScreen(
 
     if(GOP->Mode->Info->PixelFormat != PixelBlueGreenRedReserved8BitPerColor) {
         FatalError(L"Invalid screen pixel format.\r\n");
-        return NULL;
     }
 
     SimplePrint(L"Screen buffer initialized.\r\n");

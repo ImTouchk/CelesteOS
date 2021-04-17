@@ -36,8 +36,8 @@ struct MemoryMap {
 };
 
 struct BootData {
-    struct ScreenBuffer* pScreenBuffer;
     struct PSF1_FONT* pSystemFont;
+    struct ScreenBuffer* pScreenBuffer;
     struct MemoryMap memoryMap;
 };
 
