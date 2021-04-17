@@ -2,13 +2,9 @@
 #include "boot.hpp"
 #include "terminal.hpp"
 
-extern "C" void KernelMain(void* _bootData)
+extern "C" void KernelMain(BootData* bootData)
 {
-    BootData& bootData     = *((BootData*)_bootData);
-    ScreenData& screenData = *bootData.pScreenData;
-    PSF1_FONT& systemFont  = *bootData.pSystemFont;
-
-    BasicTerminal terminal(screenData, systemFont);
-    terminal.write("Hello, world!");
+    u32* buffer = (u32*)bootData->pScreenData->pFrontBuffer;
+    buffer[0] = 0x00FF0000;
     return;
 }
