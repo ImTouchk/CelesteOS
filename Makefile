@@ -15,5 +15,5 @@ all:
 	mcopy -o -i ${IMAGE_FILE} bin/kernel.elf  ::
 
 clean:
-	rm bootloader/.temp/
-	rm kernel/.temp/
+	rm -r bootloader/.temp/
+	rm -r kernel/.temp/
