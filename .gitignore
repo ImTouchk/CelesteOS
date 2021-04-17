@@ -2,4 +2,4 @@ bin/
 bootloader/.temp/
 kernel/.temp/
 .vscode/
-
+.idea/
