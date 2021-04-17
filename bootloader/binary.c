@@ -95,9 +95,8 @@ VOID LoadKernel(
 
     //BootServices->ExitBootServices(*ImageHandle, MapKey);
 
-    void (*KernelMain)(void*) = (void (*)(void*))Header.e_entry;
-
-    KernelMain((void*)StartData);
+    void (*KernelMain)(struct BootData*) = (void (*)(struct BootData*))Header.e_entry;
+    KernelMain(StartData);
 
     SimplePrint(L"Left kernel main.\r\n");
 }
