@@ -92,7 +92,9 @@ VOID LoadKernel(
     }
 
     SimplePrint(L"Kernel binary loaded. Jumping to `KernelMain`.\r\n");
-    
+
+    BootServices->ExitBootServices(*ImageHandle, MapKey);
+
     void (*KernelMain)(struct BootData*) = 
     ((__attribute__((sysv_abi)) void (*)(struct BootData*) ) Header.e_entry);
 
