@@ -9,8 +9,11 @@ setup:
 	mcopy   -i ${IMAGE_FILE} res/zap-light16.psf ::
 
 all:
+	@echo "==================== BOOTLOADER ===================="
 	cd bootloader && make all
+	@echo "==================== KERNEL ===================="
 	cd kernel     && make all
+	@echo "==================== IMAGE ===================="
 	mcopy -o -i ${IMAGE_FILE} bin/BOOTX64.EFI ::/EFI/BOOT
 	mcopy -o -i ${IMAGE_FILE} bin/kernel.elf  ::
 
