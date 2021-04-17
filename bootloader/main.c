@@ -17,7 +17,7 @@ EFI_STATUS efi_main(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE* SystemTable)
     InitializePrint(&ImageHandle, SystemTable);
 
     KernelData.pSystemFont   = LoadFont(&ImageHandle, SystemTable, NULL, L"zap-light16.psf");
-    KernelData.pScreenBuffer = InitializeScreen(&ImageHandle, SystemTable);
+    KernelData.pScreenBuffer = InitializeScreen(&ImageHandle, SystemTable, SystemTable->BootServices);
     KernelData.memoryMap     = LoadMemoryInfo(&ImageHandle, SystemTable, &MapKey);
 
     KernelBin = LoadFile(&ImageHandle, SystemTable, NULL, L"kernel.elf");

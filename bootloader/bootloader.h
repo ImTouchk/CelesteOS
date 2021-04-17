@@ -63,7 +63,8 @@ struct MemoryMap LoadMemoryInfo(
 
 struct ScreenBuffer* InitializeScreen(
     __IN__ EFI_HANDLE* ImageHandle,
-    __IN__ EFI_SYSTEM_TABLE* SystemTable
+    __IN__ EFI_SYSTEM_TABLE* SystemTable,
+    __IN__ EFI_BOOT_SERVICES* BootServices
 );
 
 VOID LoadKernel(
