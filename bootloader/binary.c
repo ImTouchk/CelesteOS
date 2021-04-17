@@ -31,9 +31,9 @@ VOID LoadBinary(EFI_FILE* File)
     File->GetInfo(File, &gEfiFileInfoGuid, &FileInfoSize, NULL);
     SysTable->BootServices->AllocatePool(EfiLoaderData, FileInfoSize, (void**)&FileInfo);
     File->GetInfo(File, &gEfiFileInfoGuid, &FileInfoSize, (void**)&FileInfo);
-
-    HeaderSize = sizeof(Header);
-    File->Read(File, &HeaderSize, &Header);
+    HeaderSize = sizeof(Elf64_Ehdr);
+    File->Read(File, &HeaderSize, (void*)&Header);
+    // ^--- now the program crashes here
 
     if(
         memcmp(&Header.e_ident[EI_MAG0], ELFMAG, SELFMAG) != 0 ||
