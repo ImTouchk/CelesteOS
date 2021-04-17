@@ -1,13 +1,13 @@
-CC      := gcc
+CC      := g++
 CFLAGS  := -ffreestanding -mno-red-zone -Wextra
 LDFLAGS := -T kernel.ld -nostdlib -Bsymbolic -static
 
-SRC := $(shell find . -name '*.c')
-OBJ := $(patsubst ./%.c, .temp/%.o, $(SRC))
+SRC := $(shell find . -name '*.cpp')
+OBJ := $(patsubst ./%.cpp, .temp/%.o, $(SRC))
 
-$(OBJ): .temp/%.o : %.c
+$(OBJ): .temp/%.o : %.cpp
 	mkdir -p $(dir $@)
-	${CC} ${CFLAGS} -c $(patsubst .temp/%.o, %.c, $@) -o $@
+	${CC} ${CFLAGS} -c $(patsubst .temp/%.o, %.cpp, $@) -o $@
 
 .PHONY: all
 all: $(OBJ)
