@@ -5,17 +5,18 @@
 
 struct ScreenBuffer* InitializeScreen(
     EFI_HANDLE* ImageHandle,
-    EFI_SYSTEM_TABLE* SystemTable
+    EFI_SYSTEM_TABLE* SystemTable,
+    EFI_BOOT_SERVICES* BootServices
 )
 {
-    static struct ScreenBuffer*           Screen;
+    static struct ScreenBuffer            Screen = { 0 };
     EFI_GRAPHICS_OUTPUT_PROTOCOL*         GOP;
     EFI_STATUS                            Status;
     EFI_GRAPHICS_OUTPUT_MODE_INFORMATION* Info;
     UINTN                                 InfoSize;
     EFI_GUID GopGUID = EFI_GRAPHICS_OUTPUT_PROTOCOL_GUID;
 
-    Status  = SystemTable->BootServices->LocateProtocol(
+    Status  = BootServices->LocateProtocol(
         &GopGUID,
         NULL,
         (void**)&GOP
@@ -39,11 +40,12 @@ struct ScreenBuffer* InitializeScreen(
         }
     }
 
-    Screen->pFrontBuffer  = (void*)(GOP->Mode->FrameBufferBase);
-    Screen->bufferSize    = GOP->Mode->FrameBufferSize;
-    Screen->width         = GOP->Mode->Info->HorizontalResolution;
-    Screen->height        = GOP->Mode->Info->VerticalResolution;
-    Screen->pxPerScanline = GOP->Mode->Info->PixelsPerScanLine;
+    Screen.pFrontBuffer  = (void*)(GOP->Mode->FrameBufferBase);
+    Screen.pUnused       = NULL;
+    Screen.bufferSize    = GOP->Mode->FrameBufferSize;
+    Screen.width         = GOP->Mode->Info->HorizontalResolution;
+    Screen.height        = GOP->Mode->Info->VerticalResolution;
+    Screen.pxPerScanline = GOP->Mode->Info->PixelsPerScanLine;
 
     if(GOP->Mode->Info->PixelFormat != PixelBlueGreenRedReserved8BitPerColor) {
         FatalError(L"Invalid screen pixel format.\r\n");
@@ -51,5 +53,5 @@ struct ScreenBuffer* InitializeScreen(
     }
 
     SimplePrint(L"Screen buffer initialized.\r\n");
-    return Screen;
+    return &Screen;
 }
