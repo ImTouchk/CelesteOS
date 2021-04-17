@@ -3,3 +3,4 @@ bootloader/.temp/
 kernel/.temp/
 .vscode/
 .idea/
+res/OVMF.fd
