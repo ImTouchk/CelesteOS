@@ -41,33 +41,33 @@ struct BootData {
     struct MemoryMap memoryMap;
 };
 
-EFI_FILE* LoadFile(
+extern EFI_FILE* LoadFile(
     __IN__ EFI_HANDLE* ImageHandle,
     __IN__ EFI_SYSTEM_TABLE* SystemTable,
     __IN__ EFI_FILE* Directory,
     __IN__ CHAR16* Path
 );
 
-struct PSF1_FONT* LoadFont(
+extern struct PSF1_FONT* LoadFont(
     __IN__ EFI_HANDLE* ImageHandle,
     __IN__ EFI_SYSTEM_TABLE* SystemTable,
     __IN__ EFI_FILE* Directory,
     __IN__ CHAR16* Path
 );
 
-struct MemoryMap LoadMemoryInfo(
+extern struct MemoryMap LoadMemoryInfo(
     __IN__ EFI_HANDLE* ImageHandle,
     __IN__ EFI_SYSTEM_TABLE* SystemTable,
     __OUT__ UINT64* MemoryMapKey
 );
 
-struct ScreenBuffer* InitializeScreen(
+extern struct ScreenBuffer* InitializeScreen(
     __IN__ EFI_HANDLE* ImageHandle,
     __IN__ EFI_SYSTEM_TABLE* SystemTable,
     __IN__ EFI_BOOT_SERVICES* BootServices
 );
 
-VOID LoadKernel(
+extern VOID LoadKernel(
     __IN__ EFI_HANDLE* ImageHandle,
     __IN__ EFI_SYSTEM_TABLE* SystemTable,
     __IN__ EFI_BOOT_SERVICES* BootServices,
@@ -76,13 +76,13 @@ VOID LoadKernel(
     __IN__ struct BootData* StartData
 );
 
-VOID InitializePrint(
+extern VOID InitializePrint(
     __IN__ EFI_HANDLE* ImageHandle,
     __IN__ EFI_SYSTEM_TABLE* SystemTable
 );
 
-VOID SimplePrintUInt(__IN__ UINTN Number);
-VOID SimplePrint(__IN__ CHAR16* Message);
-VOID FatalError(__IN__ CHAR16* Message);
+extern VOID SimplePrintUInt(__IN__ UINTN Number);
+extern VOID SimplePrint(__IN__ CHAR16* Message);
+extern VOID FatalError(__IN__ CHAR16* Message);
 
 #endif // BOOTLOADER_H
