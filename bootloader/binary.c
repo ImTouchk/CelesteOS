@@ -18,7 +18,11 @@ static INTN memcmp(const void* a, const void* b, UINTN size)
     return 0;
 }
 
-VOID LoadBinary(EFI_FILE* File)
+VOID LoadBinary(
+    EFI_HANDLE* ImageHandle,
+    EFI_SYSTEM_TABLE* SystemTable,
+    EFI_FILE* File
+)
 {
     Elf64_Ehdr     Header;
     Elf64_Phdr*    PHeader;
@@ -29,11 +33,12 @@ VOID LoadBinary(EFI_FILE* File)
     UINTN          PHeadersSize;
 
     File->GetInfo(File, &gEfiFileInfoGuid, &FileInfoSize, NULL);
-    SysTable->BootServices->AllocatePool(EfiLoaderData, FileInfoSize, (void**)&FileInfo);
+    SystemTable->BootServices->AllocatePool(EfiLoaderData, FileInfoSize, (void**)&FileInfo);
     File->GetInfo(File, &gEfiFileInfoGuid, &FileInfoSize, (void**)&FileInfo);
-    HeaderSize = sizeof(Elf64_Ehdr);
+    HeaderSize = sizeof(Header);
     File->Read(File, &HeaderSize, (void*)&Header);
     // ^--- now the program crashes here
+
 
     if(
         memcmp(&Header.e_ident[EI_MAG0], ELFMAG, SELFMAG) != 0 ||
@@ -51,7 +56,7 @@ VOID LoadBinary(EFI_FILE* File)
 
     File->SetPosition(File, Header.e_phoff);
     PHeadersSize = Header.e_phnum * Header.e_phentsize;
-    SysTable->BootServices->AllocatePool(EfiLoaderData, PHeadersSize, (void**)&PHeaders);
+    SystemTable->BootServices->AllocatePool(EfiLoaderData, PHeadersSize, (void**)&PHeaders);
     /*  system crash here ------------^ */
     File->Read(File, &PHeadersSize, PHeaders);
 
@@ -67,7 +72,7 @@ VOID LoadBinary(EFI_FILE* File)
         case PT_LOAD: {
             UINTN Pages = (PHeader->p_memsz + 0x1000 - 1) / 0x1000;
             Elf64_Addr Segment = PHeader->p_paddr;
-            SysTable->BootServices->AllocatePages(
+            SystemTable->BootServices->AllocatePages(
                 AllocateAddress,
                 EfiLoaderData,
                 Pages,

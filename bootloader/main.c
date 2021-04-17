@@ -3,18 +3,6 @@
 
 #include "bootloader.h"
 
-EFI_HANDLE* ImgHandle;
-EFI_SYSTEM_TABLE* SysTable;
-
-VOID InitializeLoader(
-    __IN__ EFI_HANDLE* ImageHandle,
-    __IN__ EFI_SYSTEM_TABLE* SystemTable
-)
-{
-    ImgHandle = ImageHandle;
-    SysTable  = SystemTable;
-}
-
 EFI_STATUS efi_main(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE* SystemTable)
 {
     EFI_INPUT_KEY   Key;
@@ -26,19 +14,14 @@ EFI_STATUS efi_main(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE* SystemTable)
     SystemTable->ConIn->Reset(SystemTable->ConIn, FALSE);
     SystemTable->ConOut->ClearScreen(SystemTable->ConOut);
 
-    InitializeLoader(&ImageHandle, SystemTable);
+    InitializePrint(&ImageHandle, SystemTable);
 
-    KernelData.pSystemFont   = LoadFont(NULL, L"zap-light16.psf");
-    KernelData.pScreenBuffer = InitializeScreen();
-    KernelData.memoryMap     = LoadMemoryInfo(&MapKey);
+    KernelData.pSystemFont   = LoadFont(&ImageHandle, SystemTable, NULL, L"zap-light16.psf");
+    KernelData.pScreenBuffer = InitializeScreen(&ImageHandle, SystemTable);
+    KernelData.memoryMap     = LoadMemoryInfo(&ImageHandle, SystemTable, &MapKey);
 
-    KernelBin = LoadFile(NULL, L"kernel.elf");
-    if(KernelBin == NULL) {
-        FatalError(L"Couldn't load the kernel binary.\r\n");
-    }
-    
-    SimplePrint(L"Loaded kernel binary.\n");
-    LoadBinary(KernelBin);
+    KernelBin = LoadFile(&ImageHandle, SystemTable, NULL, L"kernel.elf");
+    LoadBinary(&ImageHandle, SystemTable, KernelBin);
 
     SimplePrint(L"Exitted KernelMain.\r\n");
 

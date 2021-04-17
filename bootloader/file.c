@@ -4,8 +4,10 @@
 #include "bootloader.h"
 
 EFI_FILE* LoadFile(
-    __IN__ EFI_FILE* Directory,
-    __IN__ CHAR16* Path
+    EFI_HANDLE* ImageHandle,
+    EFI_SYSTEM_TABLE* SystemTable,
+    EFI_FILE* Directory,
+    CHAR16* Path
 )
 {
     EFI_FILE*                        File;
@@ -13,13 +15,13 @@ EFI_FILE* LoadFile(
     EFI_SIMPLE_FILE_SYSTEM_PROTOCOL* FileSystem;
     EFI_STATUS                       Status;
 
-    SysTable->BootServices->HandleProtocol(
-        *ImgHandle,
+    SystemTable->BootServices->HandleProtocol(
+        *ImageHandle,
         &gEfiLoadedImageProtocolGuid,
         (void**)&Image
     );
 
-    SysTable->BootServices->HandleProtocol(
+    SystemTable->BootServices->HandleProtocol(
         Image->DeviceHandle,
         &gEfiSimpleFileSystemProtocolGuid,
         (void**)&FileSystem

@@ -3,6 +3,8 @@
 #include "bootloader.h"
 
 struct MemoryMap LoadMemoryInfo(
+    EFI_HANDLE* ImageHandle,
+    EFI_SYSTEM_TABLE* SystemTable,
     UINT64* MemoryMapKey
 )
 {
@@ -14,7 +16,7 @@ struct MemoryMap LoadMemoryInfo(
     UINT32                 DescriptorVer;
     struct MemoryMap       MapStruct;
 
-    BootServices = SysTable->BootServices;
+    BootServices = SystemTable->BootServices;
     BootServices->GetMemoryMap(
         &MapSize, 
         Map, 

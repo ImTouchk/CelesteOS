@@ -3,7 +3,10 @@
 
 #include "bootloader.h"
 
-struct ScreenBuffer* InitializeScreen()
+struct ScreenBuffer* InitializeScreen(
+    EFI_HANDLE* ImageHandle,
+    EFI_SYSTEM_TABLE* SystemTable
+)
 {
     static struct ScreenBuffer*           Screen;
     EFI_GRAPHICS_OUTPUT_PROTOCOL*         GOP;
@@ -12,7 +15,7 @@ struct ScreenBuffer* InitializeScreen()
     UINTN                                 InfoSize;
     EFI_GUID GopGUID = EFI_GRAPHICS_OUTPUT_PROTOCOL_GUID;
 
-    Status  = SysTable->BootServices->LocateProtocol(
+    Status  = SystemTable->BootServices->LocateProtocol(
         &GopGUID,
         NULL,
         (void**)&GOP
@@ -25,7 +28,7 @@ struct ScreenBuffer* InitializeScreen()
         GOP, 
         (GOP->Mode == NULL) ? 0 : GOP->Mode->Mode,
         &InfoSize,
-        (void**)&Info
+        &Info
     );
 
     if(Status == EFI_NOT_STARTED) {

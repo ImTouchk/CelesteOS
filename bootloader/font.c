@@ -4,8 +4,10 @@
 #include "bootloader.h"
 
 struct PSF1_FONT* LoadFont(
-    __IN__ EFI_FILE* Directory,
-    __IN__ CHAR16* Path
+    EFI_HANDLE* ImageHandle,
+    EFI_SYSTEM_TABLE* SystemTable,
+    EFI_FILE* Directory,
+    CHAR16* Path
 )
 {
     EFI_FILE*           FontFile;
@@ -15,13 +17,13 @@ struct PSF1_FONT* LoadFont(
     UINTN               BufferSize;
     void*               Buffer;
 
-    FontFile = LoadFile(Directory, Path);
+    FontFile = LoadFile(ImageHandle, SystemTable, Directory, Path);
     if(FontFile == NULL) {
         FatalError(L"Could not load the system font file.\r\n");
         return NULL;
     }
 
-    SysTable->BootServices->AllocatePool(
+    SystemTable->BootServices->AllocatePool(
         EfiLoaderData,
         sizeof(struct PSF1_HEADER),
         (void**)&FontHeader
@@ -42,14 +44,14 @@ struct PSF1_FONT* LoadFont(
     }
 
     FontFile->SetPosition(FontFile, Size);
-    SysTable->BootServices->AllocatePool(
+    SystemTable->BootServices->AllocatePool(
         EfiLoaderData,
         BufferSize,
         (void**)&Buffer
     );
     FontFile->Read(FontFile, &BufferSize, Buffer);
 
-    SysTable->BootServices->AllocatePool(
+    SystemTable->BootServices->AllocatePool(
         EfiLoaderData,
         sizeof(struct PSF1_FONT),
         (void**)&Font
