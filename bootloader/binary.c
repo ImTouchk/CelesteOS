@@ -11,18 +11,14 @@ static INTN memcmp(const void* a, const void* b, UINTN size)
     UINTN i;
 
     for(i = 0; i < size; i++) {
-        if(a_bytes[i] < b_bytes[i]) return -1;
-        else if(a_bytes[i] > b_bytes[i]) return 1;
+        if(a_bytes[i] < b_bytes[i])      return -1;
+        else if(a_bytes[i] > b_bytes[i]) return  1;
     }
 
     return 0;
 }
 
-VOID LoadBinary(
-    EFI_HANDLE* ImageHandle,
-    EFI_SYSTEM_TABLE* SystemTable,
-    EFI_FILE* File
-)
+VOID LoadBinary(EFI_FILE* File)
 {
     Elf64_Ehdr     Header;
     Elf64_Phdr*    PHeader;
@@ -33,7 +29,7 @@ VOID LoadBinary(
     UINTN          PHeadersSize;
 
     File->GetInfo(File, &gEfiFileInfoGuid, &FileInfoSize, NULL);
-    SystemTable->BootServices->AllocatePool(EfiLoaderData, FileInfoSize, (void**)&FileInfo);
+    SysTable->BootServices->AllocatePool(EfiLoaderData, FileInfoSize, (void**)&FileInfo);
     File->GetInfo(File, &gEfiFileInfoGuid, &FileInfoSize, (void**)&FileInfo);
 
     HeaderSize = sizeof(Header);
@@ -52,20 +48,17 @@ VOID LoadBinary(
     }
 
     SimplePrint(L"Kernel binary is valid.\r\n");
-    
+
     File->SetPosition(File, Header.e_phoff);
     PHeadersSize = Header.e_phnum * Header.e_phentsize;
-    SystemTable->BootServices->AllocatePool(EfiLoaderData, PHeadersSize, (void**)&PHeaders);
+    SysTable->BootServices->AllocatePool(EfiLoaderData, PHeadersSize, (void**)&PHeaders);
     /*  system crash here ------------^ */
-
     File->Read(File, &PHeadersSize, PHeaders);
-
-
 
     SimplePrint(L"Binary pheaders read.\r\n");
     
     for(
-        Elf64_Phdr* PHeader = PHeaders;
+        PHeader = PHeaders;
         (UINT8*)PHeader < (UINT8*)PHeaders + PHeadersSize;
         PHeader = (Elf64_Phdr*)((UINT8*)PHeader + Header.e_phentsize)
     )
@@ -74,7 +67,7 @@ VOID LoadBinary(
         case PT_LOAD: {
             UINTN Pages = (PHeader->p_memsz + 0x1000 - 1) / 0x1000;
             Elf64_Addr Segment = PHeader->p_paddr;
-            SystemTable->BootServices->AllocatePages(
+            SysTable->BootServices->AllocatePages(
                 AllocateAddress,
                 EfiLoaderData,
                 Pages,

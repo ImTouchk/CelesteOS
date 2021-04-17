@@ -43,35 +43,23 @@ struct BootData {
 
 EFI_FILE* LoadFile(
     __IN__ EFI_FILE* Directory,
-    __IN__ CHAR16* Path,
-    __IN__ EFI_HANDLE* ImageHandle,
-    __IN__ EFI_SYSTEM_TABLE* SystemTable
+    __IN__ CHAR16* Path
 );
 
 struct PSF1_FONT* LoadFont(
     __IN__ EFI_FILE* Directory,
-    __IN__ CHAR16* Path,
-    __IN__ EFI_HANDLE* ImageHandle,
-    __IN__ EFI_SYSTEM_TABLE* SystemTable
-);
-
-struct ScreenBuffer* InitializeScreen(
-    __IN__ EFI_SYSTEM_TABLE* SystemTable
+    __IN__ CHAR16* Path
 );
 
 struct MemoryMap LoadMemoryInfo(
-    __IN__ EFI_HANDLE* ImageHandle,
-    __IN__ EFI_SYSTEM_TABLE* SystemTable,
     __OUT__ UINT64* MemoryMapKey
 );
 
-VOID LoadBinary(
-    __IN__ EFI_HANDLE* ImageHandle,
-    __IN__ EFI_SYSTEM_TABLE* SystemTable,
-    __IN__ EFI_FILE* File
-);
+struct ScreenBuffer* InitializeScreen();
 
-VOID InitializePrint(
+VOID LoadBinary(__IN__ EFI_FILE* File);
+
+VOID InitializeLoader(
     __IN__ EFI_HANDLE* ImageHandle,
     __IN__ EFI_SYSTEM_TABLE* SystemTable
 );
@@ -79,5 +67,8 @@ VOID InitializePrint(
 VOID SimplePrintUInt(__IN__ UINTN Number);
 VOID SimplePrint(__IN__ CHAR16* Message);
 VOID FatalError(__IN__ CHAR16* Message);
+
+extern EFI_HANDLE* ImgHandle;
+extern EFI_SYSTEM_TABLE* SysTable;
 
 #endif // BOOTLOADER_H

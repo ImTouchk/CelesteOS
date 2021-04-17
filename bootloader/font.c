@@ -5,9 +5,7 @@
 
 struct PSF1_FONT* LoadFont(
     __IN__ EFI_FILE* Directory,
-    __IN__ CHAR16* Path,
-    __IN__ EFI_HANDLE* ImageHandle,
-    __IN__ EFI_SYSTEM_TABLE* SystemTable
+    __IN__ CHAR16* Path
 )
 {
     EFI_FILE*           FontFile;
@@ -17,13 +15,13 @@ struct PSF1_FONT* LoadFont(
     UINTN               BufferSize;
     void*               Buffer;
 
-    FontFile = LoadFile(Directory, Path, ImageHandle, SystemTable);
+    FontFile = LoadFile(Directory, Path);
     if(FontFile == NULL) {
         FatalError(L"Could not load the system font file.\r\n");
         return NULL;
     }
 
-    SystemTable->BootServices->AllocatePool(
+    SysTable->BootServices->AllocatePool(
         EfiLoaderData,
         sizeof(struct PSF1_HEADER),
         (void**)&FontHeader
@@ -44,14 +42,14 @@ struct PSF1_FONT* LoadFont(
     }
 
     FontFile->SetPosition(FontFile, Size);
-    SystemTable->BootServices->AllocatePool(
+    SysTable->BootServices->AllocatePool(
         EfiLoaderData,
         BufferSize,
         (void**)&Buffer
     );
     FontFile->Read(FontFile, &BufferSize, Buffer);
 
-    SystemTable->BootServices->AllocatePool(
+    SysTable->BootServices->AllocatePool(
         EfiLoaderData,
         sizeof(struct PSF1_FONT),
         (void**)&Font

@@ -1,18 +1,9 @@
 #include "bootloader.h"
 
-static EFI_HANDLE*       IMAGE_HANDLE = NULL;
-static EFI_SYSTEM_TABLE* SYSTEM_TABLE = NULL;
-
-VOID InitializePrint(EFI_HANDLE* ImageHandle, EFI_SYSTEM_TABLE* SystemTable)
-{
-    IMAGE_HANDLE = ImageHandle;
-    SYSTEM_TABLE = SystemTable;
-}
-
 VOID SimplePrint(CHAR16* Message)
 {
-    SYSTEM_TABLE->ConOut->OutputString(
-        SYSTEM_TABLE->ConOut,
+    SysTable->ConOut->OutputString(
+        SysTable->ConOut,
         Message
     );
 }

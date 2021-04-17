@@ -5,9 +5,7 @@
 
 EFI_FILE* LoadFile(
     __IN__ EFI_FILE* Directory,
-    __IN__ CHAR16* Path,
-    __IN__ EFI_HANDLE* ImageHandle,
-    __IN__ EFI_SYSTEM_TABLE* SystemTable
+    __IN__ CHAR16* Path
 )
 {
     EFI_FILE*                        File;
@@ -15,13 +13,13 @@ EFI_FILE* LoadFile(
     EFI_SIMPLE_FILE_SYSTEM_PROTOCOL* FileSystem;
     EFI_STATUS                       Status;
 
-    SystemTable->BootServices->HandleProtocol(
-        *ImageHandle,
+    SysTable->BootServices->HandleProtocol(
+        *ImgHandle,
         &gEfiLoadedImageProtocolGuid,
         (void**)&Image
     );
 
-    SystemTable->BootServices->HandleProtocol(
+    SysTable->BootServices->HandleProtocol(
         Image->DeviceHandle,
         &gEfiSimpleFileSystemProtocolGuid,
         (void**)&FileSystem

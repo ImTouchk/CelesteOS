@@ -3,43 +3,42 @@
 
 #include "bootloader.h"
 
+EFI_HANDLE* ImgHandle;
+EFI_SYSTEM_TABLE* SysTable;
+
+VOID InitializeLoader(
+    __IN__ EFI_HANDLE* ImageHandle,
+    __IN__ EFI_SYSTEM_TABLE* SystemTable
+)
+{
+    ImgHandle = ImageHandle;
+    SysTable  = SystemTable;
+}
+
 EFI_STATUS efi_main(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE* SystemTable)
 {
     EFI_INPUT_KEY   Key;
     EFI_STATUS      Status;
+    EFI_FILE*       KernelBin;
     UINTN           MapKey;
     struct BootData KernelData;
 
     SystemTable->ConIn->Reset(SystemTable->ConIn, FALSE);
     SystemTable->ConOut->ClearScreen(SystemTable->ConOut);
 
-    InitializePrint(&ImageHandle, SystemTable);
+    InitializeLoader(&ImageHandle, SystemTable);
 
-    KernelData.pSystemFont = LoadFont(
-        NULL,
-        L"zap-light16.psf",
-        &ImageHandle,
-        SystemTable
-    );
+    KernelData.pSystemFont   = LoadFont(NULL, L"zap-light16.psf");
+    KernelData.pScreenBuffer = InitializeScreen();
+    KernelData.memoryMap     = LoadMemoryInfo(&MapKey);
 
-    KernelData.pScreenBuffer = InitializeScreen(
-        SystemTable
-    );
-
-    KernelData.memoryMap = LoadMemoryInfo(
-        &ImageHandle,
-        SystemTable,
-        &MapKey
-    );
-
-    SimplePrint(L"Loading the kernel...\r\n");
-    SimplePrint(L"Leaving the UEFI environment...\r\n");
-
-    LoadBinary(
-        &ImageHandle, 
-        SystemTable,
-        LoadFile(NULL, L"kernel.elf", &ImageHandle, SystemTable)
-    );
+    KernelBin = LoadFile(NULL, L"kernel.elf");
+    if(KernelBin == NULL) {
+        FatalError(L"Couldn't load the kernel binary.\r\n");
+    }
+    
+    SimplePrint(L"Loaded kernel binary.\n");
+    LoadBinary(KernelBin);
 
     SimplePrint(L"Exitted KernelMain.\r\n");
 
