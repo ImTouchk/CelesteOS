@@ -66,10 +66,13 @@ struct ScreenBuffer* InitializeScreen(
     __IN__ EFI_SYSTEM_TABLE* SystemTable
 );
 
-VOID LoadBinary(
+VOID LoadKernel(
     __IN__ EFI_HANDLE* ImageHandle,
     __IN__ EFI_SYSTEM_TABLE* SystemTable,
-    __IN__ EFI_FILE* File
+    __IN__ EFI_BOOT_SERVICES* BootServices,
+    __IN__ EFI_FILE* File,
+    __IN__ UINT64 MapKey,
+    __IN__ struct BootData* StartData
 );
 
 VOID InitializePrint(

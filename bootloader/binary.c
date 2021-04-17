@@ -18,10 +18,19 @@ static INTN memcmp(const void* a, const void* b, UINTN size)
     return 0;
 }
 
-VOID LoadBinary(
+/*
+    The system halts if I use the EFI_BOOT_SERVICES pointer
+    inside of SystemTable so I had to pass it as a parameter.
+    Don't know why :|
+*/
+
+VOID LoadKernel(
     EFI_HANDLE* ImageHandle,
     EFI_SYSTEM_TABLE* SystemTable,
-    EFI_FILE* File
+    EFI_BOOT_SERVICES* BootServices,
+    EFI_FILE* File,
+    UINT64 MapKey,
+    struct BootData* StartData
 )
 {
     Elf64_Ehdr     Header;
@@ -33,12 +42,10 @@ VOID LoadBinary(
     UINTN          PHeadersSize;
 
     File->GetInfo(File, &gEfiFileInfoGuid, &FileInfoSize, NULL);
-    SystemTable->BootServices->AllocatePool(EfiLoaderData, FileInfoSize, (void**)&FileInfo);
+    BootServices->AllocatePool(EfiLoaderData, FileInfoSize, (void**)&FileInfo);
     File->GetInfo(File, &gEfiFileInfoGuid, &FileInfoSize, (void**)&FileInfo);
     HeaderSize = sizeof(Header);
     File->Read(File, &HeaderSize, (void*)&Header);
-    // ^--- now the program crashes here
-
 
     if(
         memcmp(&Header.e_ident[EI_MAG0], ELFMAG, SELFMAG) != 0 ||
@@ -56,11 +63,8 @@ VOID LoadBinary(
 
     File->SetPosition(File, Header.e_phoff);
     PHeadersSize = Header.e_phnum * Header.e_phentsize;
-    SystemTable->BootServices->AllocatePool(EfiLoaderData, PHeadersSize, (void**)&PHeaders);
-    /*  system crash here ------------^ */
+    BootServices->AllocatePool(EfiLoaderData, PHeadersSize, (void**)&PHeaders);
     File->Read(File, &PHeadersSize, PHeaders);
-
-    SimplePrint(L"Binary pheaders read.\r\n");
     
     for(
         PHeader = PHeaders;
@@ -72,7 +76,7 @@ VOID LoadBinary(
         case PT_LOAD: {
             UINTN Pages = (PHeader->p_memsz + 0x1000 - 1) / 0x1000;
             Elf64_Addr Segment = PHeader->p_paddr;
-            SystemTable->BootServices->AllocatePages(
+            BootServices->AllocatePages(
                 AllocateAddress,
                 EfiLoaderData,
                 Pages,
@@ -88,6 +92,11 @@ VOID LoadBinary(
     }
 
     SimplePrint(L"Kernel binary loaded. Jumping to `KernelMain`.\r\n");
-    void (*KernelMain)() = ((__attribute__((sysv_abi)) void (*)() ) Header.e_entry);
-    KernelMain();
+    
+    void (*KernelMain)(struct BootData*) = 
+    ((__attribute__((sysv_abi)) void (*)(struct BootData*) ) Header.e_entry);
+
+    KernelMain(StartData);
+
+    SimplePrint(L"Left kernel main.\r\n");
 }

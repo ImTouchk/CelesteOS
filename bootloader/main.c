@@ -21,9 +21,15 @@ EFI_STATUS efi_main(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE* SystemTable)
     KernelData.memoryMap     = LoadMemoryInfo(&ImageHandle, SystemTable, &MapKey);
 
     KernelBin = LoadFile(&ImageHandle, SystemTable, NULL, L"kernel.elf");
-    LoadBinary(&ImageHandle, SystemTable, KernelBin);
-
-    SimplePrint(L"Exitted KernelMain.\r\n");
+    
+    LoadKernel(
+        &ImageHandle, 
+        SystemTable, 
+        SystemTable->BootServices, 
+        KernelBin, 
+        MapKey, 
+        &KernelData
+    );
 
     do { Status = SystemTable->ConIn->ReadKeyStroke(SystemTable->ConIn, &Key); }
     while(Status == EFI_NOT_READY);
