@@ -3,7 +3,8 @@ ENTRY(KernelMain)
 
 SECTIONS
 {
-    .text : ALIGN(0x1000)
+    __kernelStart = .;
+	.text : ALIGN(0x1000)
 	{
 		*(.text)
 	}
@@ -20,4 +21,5 @@ SECTIONS
 		*(COMMON)
 		*(.bss)
 	}
+	__kernelEnd = .;
 }
