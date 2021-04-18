@@ -2,9 +2,14 @@
 #include "boot.hpp"
 #include "terminal.hpp"
 
+[[gnu::ms_abi]]
 extern "C" void KernelMain(BootData* bootData)
 {
-    u32* buffer = (u32*)bootData->pScreenData->pFrontBuffer;
-    buffer[0] = 0x00FF0000;
+    ScreenData& screenData  = *bootData->pScreenData;
+    u32*        frontBuffer = static_cast<u32*>(screenData.pFrontBuffer);
+
+    for(int i = 0; i < 600; i++)
+        frontBuffer[i] = 0x00FFFFFF;
+
     return;
 }
