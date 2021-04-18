@@ -1,5 +1,5 @@
 CC       := clang
-CFLAGS   := -target x86_64-pc-win32-coff -fno-stack-protector -fshort-wchar -fpic -flto -ffreestanding -mno-red-zone -Wall -Wextra
+CFLAGS   := -target x86_64-pc-win32-coff -fno-stack-protector -fshort-wchar -flto -ffreestanding -mno-red-zone -Wall -Wextra
 INCLUDES := -Ignu-efi/inc -Ignu-efi/inc/protocol -Ignu-efi/inc/x86_64
 LDFLAGS  := -target x86_64-pc-win32-coff -nostdlib -Wl,-entry:efi_main -Wl,-subsystem:efi_application -fuse-ld=lld-link
 
