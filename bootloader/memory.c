@@ -3,7 +3,6 @@
 #include "bootloader.h"
 
 struct MemoryMap LoadMemoryInfo(
-    EFI_HANDLE* ImageHandle,
     EFI_SYSTEM_TABLE* SystemTable,
     UINT64* MemoryMapKey
 )
