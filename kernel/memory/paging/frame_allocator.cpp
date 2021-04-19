@@ -95,9 +95,11 @@ namespace Memory {
         const usize index = (uptr)address / 4096;
         if(m_Bitmap.get(index) == false)
             return;
-        m_Bitmap.set(index, false);
-        m_FreeMemory += 4096;
-        m_UsedMemory -= 4096;
+        
+        if(m_Bitmap.set(index, false)) {
+            m_FreeMemory += 4096;
+            m_UsedMemory -= 4096;
+        }
     }
 
     void pageFrameAllocator::free(void* start, usize count)
@@ -112,9 +114,11 @@ namespace Memory {
         const usize index = (uptr)address / 4096;
         if(m_Bitmap.get(index) == true)
             return;
-        m_Bitmap.set(index, true);
-        m_FreeMemory -= 4096;
-        m_UsedMemory += 4096;
+        
+        if(m_Bitmap.set(index, true)) {
+            m_FreeMemory -= 4096;
+            m_UsedMemory += 4096;
+        }
     }
 
     void pageFrameAllocator::lock(void* start, usize count)
@@ -129,9 +133,11 @@ namespace Memory {
         const usize index = (uptr)address / 4096;
         if(m_Bitmap.get(index) == false)
             return;
-        m_Bitmap.set(index, false);
-        m_FreeMemory     += 4096;
-        m_ReservedMemory -= 4096;
+        
+        if(m_Bitmap.set(index, false)) {
+            m_FreeMemory     += 4096;
+            m_ReservedMemory -= 4096;
+        }
     }
 
     void pageFrameAllocator::unreserve(void* start, usize count)
@@ -146,9 +152,11 @@ namespace Memory {
         const usize index = (uptr)address / 4096;
         if(m_Bitmap.get(index) == true)
             return;
-        m_Bitmap.set(index, true);
-        m_FreeMemory     -= 4096;
-        m_ReservedMemory += 4096;
+
+        if(m_Bitmap.set(index, true)) {
+            m_FreeMemory     -= 4096;
+            m_ReservedMemory += 4096;
+        }
     }
 
     void pageFrameAllocator::reserve(void* start, usize count)

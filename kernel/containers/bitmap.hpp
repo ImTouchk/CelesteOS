@@ -8,7 +8,7 @@ namespace Containers {
         bitmap(byte* buffer, usize _size);
         bitmap();
 
-        void set(usize index, bool value);
+        bool set(usize index, bool value);
         bool get(usize index) const;
 
         usize size;
