@@ -5,11 +5,11 @@
 [[gnu::ms_abi]]
 extern "C" void KernelMain(BootData* bootData)
 {
+    PSF1_FONT&  systemFont  = *bootData->pSystemFont;
     ScreenData& screenData  = *bootData->pScreenData;
-    u32*        frontBuffer = static_cast<u32*>(screenData.pFrontBuffer);
 
-    for(int i = 0; i < 600; i++)
-        frontBuffer[i] = 0x00FFFFFF;
+    BasicTerminal terminal(screenData, systemFont);
+    terminal.write("Hello, world!\n-%d", -1);
 
     return;
 }
