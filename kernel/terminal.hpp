@@ -7,7 +7,13 @@
 class BasicTerminal {
 public:
     BasicTerminal(ScreenData& screenData, PSF1_FONT& sysFont);
-    void write(const char* buffer, ...);
+
+    template<typename... Args>
+    void print(Args&&... args)
+    {
+        (write(static_cast<Args&&>(args)), ...);
+    }
+
     void clear();
     void set_color(const u32 color);
 
@@ -20,10 +26,10 @@ private:
     void new_line();
     void parse_char(const char c);
     void write_char(const char c);
-    void write_string(const char* string);
-    void write_unsigned(u64 number);
-    void write_decimal(f64 number);
-    void write_int(i64 number);
+    void write(const char* string);
+    void write(usize number);
+    void write(fsize number);
+    void write(isize number);
 
     void write_pixel(const ScreenPoint& point);
 

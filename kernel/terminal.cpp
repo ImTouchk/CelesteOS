@@ -1,7 +1,5 @@
 #include "terminal.hpp"
 
-#include <stdarg.h>
-
 BasicTerminal::BasicTerminal(ScreenData& screenData, PSF1_FONT& sysFont)
     : m_ScreenData(screenData), m_Font(sysFont)
 {
@@ -23,50 +21,9 @@ void BasicTerminal::set_color(const u32 color)
     m_Color = color;
 }
 
-void BasicTerminal::write(const char* buffer, ...)
+void BasicTerminal::write(fsize number)
 {
-    va_list args;
-    va_start(args, buffer);
-
-    while(*buffer != '\0') {
-        if(*buffer != '%') {
-            parse_char(*buffer);
-            ++buffer;
-            continue;
-        }
-
-        switch(*(++buffer)) {
-            case 'd': {
-                i64 number = va_arg(args, i32);
-                write_int(number);
-                break;
-            }
-            case 'u': {
-                u64 number = va_arg(args, u32);
-                write_unsigned(number);
-                break;
-            }
-            case 'f': {
-                f64 number = va_arg(args, f64);
-                write_decimal(number);
-                break;
-            }
-            case 's': {
-                char* string = va_arg(args, char*);
-                write_string(string);
-                break;
-            }
-            default: parse_char(*buffer); break;
-        }
-
-        ++buffer;
-    }
-}
-
-void BasicTerminal::write_decimal(f64 number)
-{
-    const i64 integerPart = static_cast<i64>(number);
-    write_int(integerPart);
+    write(static_cast<isize>(number));
     parse_char('.');
 
     if(number < 0) {
@@ -78,18 +35,18 @@ void BasicTerminal::write_decimal(f64 number)
     char string[DECIMAL_COUNT + 1];
     byte count = 0;
 
-    f64 decimals = number - integerPart;
+    f64 decimals = number - static_cast<isize>(number);
     for(byte i = 0; i < DECIMAL_COUNT; i++) {
         decimals *= 10;
-        string[count++] = '0' + (i64)decimals;
-        decimals -= (i64)decimals;
+        string[count++] = '0' + static_cast<isize>(decimals);
+        decimals -= static_cast<isize>(decimals);
     }
 
     string[count] = '\0';
-    write_string(string);
+    write(string);
 }
 
-void BasicTerminal::write_int(i64 number)
+void BasicTerminal::write(isize number)
 {
     if(number == 0) {
         parse_char('0');
@@ -101,10 +58,10 @@ void BasicTerminal::write_int(i64 number)
         number *= -1;
     }
 
-    write_unsigned(static_cast<u64>(number));
+    write(static_cast<usize>(number));
 }
 
-void BasicTerminal::write_unsigned(u64 number)
+void BasicTerminal::write(usize number)
 {
     if(number == 0) {
         parse_char('0');
@@ -112,8 +69,8 @@ void BasicTerminal::write_unsigned(u64 number)
     }
 
     char string[256];
-    byte count    = 0;
-    u64  reversed = 0;
+    byte  count    = 0;
+    usize reversed = 0;
 
     while(number != 0) {
         reversed  = (reversed * 10) + (number % 10);
@@ -127,10 +84,10 @@ void BasicTerminal::write_unsigned(u64 number)
     }
 
     string[count] = '\0';
-    write_string(string);
+    write(string);
 }
 
-void BasicTerminal::write_string(const char* string)
+void BasicTerminal::write(const char* string)
 {
     const char* current = string;
     while(*current != '\0') {

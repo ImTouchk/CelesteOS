@@ -9,7 +9,7 @@ extern "C" void KernelMain(BootData* bootData)
     ScreenData& screenData  = *bootData->pScreenData;
 
     BasicTerminal terminal(screenData, systemFont);
-    terminal.write("Hello, world!\n-%d", -1);
+    terminal.print("Hello, ", "world", "!\n", (u64)12345, (i64)-12345, (f64)-1.2345);
 
     return;
 }
