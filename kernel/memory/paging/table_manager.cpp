@@ -1,11 +1,5 @@
+#include "../utils.hpp"
 #include "table_manager.hpp"
-
-void memset(void* buf, usize len, usize val)
-{
-    for(usize i = 0; i  < len; i++) {
-        *(byte*)((usize)buf + i) = val;
-    }
-}
 
 namespace Memory {
     pageTableManager::pageTableManager(pageTable* pml4addr, pageFrameAllocator& _frameAllocator)
@@ -22,7 +16,7 @@ namespace Memory {
 
         if(!pde.present) {
             pdp = (pageTable*)frameAllocator.request();
-            memset(pdp, 0x1000, 0x00);
+            Memory::set(pdp, 0x1000, 0x00);
 
             pde.address   = (usize)pdp >> 12;
             pde.present   = true;
@@ -39,7 +33,7 @@ namespace Memory {
         pde = pdp->entries[indexer.pdi];
         if(!pde.present) {
             pd = (pageTable*)frameAllocator.request();
-            memset(pd, 0x1000, 0x00);
+            Memory::set(pd, 0x1000, 0x00);
 
             pde.address   = (usize)pd >> 12;
             pde.present   = true;
@@ -56,7 +50,7 @@ namespace Memory {
         pde = pd->entries[indexer.pti];
         if(!pde.present) {
             pt = (pageTable*)frameAllocator.request();
-            memset(pt, 0x1000, 0x00);
+            Memory::set(pt, 0x1000, 0x00);
 
             pde.address   = (usize)pt >> 12;
             pde.present   = true;
