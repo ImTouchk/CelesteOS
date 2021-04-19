@@ -11,4 +11,10 @@ using i64  = long long;
 using f32  = float;
 using f64  = double;
 
+/* native number types */
+using isize = i64;
+using usize = u64;
+using fsize = f64;
+
+
 #endif // TYPES_HPP
