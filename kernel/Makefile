@@ -1,6 +1,6 @@
 CC      := clang++
 LD      := ld
-CFLAGS  := -target x86_64-pc-none-elf -ffreestanding -fno-exceptions -flto -mno-red-zone -Wextra -std=c++20 -g
+CFLAGS  := -target x86_64-pc-none-elf -ffreestanding -fno-exceptions -mno-red-zone -Wextra -std=c++20 -g
 LDFLAGS := -T kernel.ld -nostdlib -Bsymbolic -static
 
 SRC := $(shell find . -name '*.cpp')
