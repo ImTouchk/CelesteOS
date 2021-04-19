@@ -4,8 +4,6 @@
 #include "bootloader.h"
 
 struct ScreenBuffer* InitializeScreen(
-    EFI_HANDLE* ImageHandle,
-    EFI_SYSTEM_TABLE* SystemTable,
     EFI_BOOT_SERVICES* BootServices
 )
 {
