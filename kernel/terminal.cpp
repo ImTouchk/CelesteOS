@@ -1,6 +1,6 @@
 #include "terminal.hpp"
 
-BasicTerminal::BasicTerminal(ScreenData& screenData, PSF1_FONT& sysFont)
+BasicTerminal::BasicTerminal(Boot::screenData& screenData, Boot::systemFont& sysFont)
     : m_ScreenData(screenData), m_Font(sysFont)
 {
     m_Cursor = { .x = 0, .y = 0 };

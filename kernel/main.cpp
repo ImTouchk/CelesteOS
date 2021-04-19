@@ -2,14 +2,20 @@
 #include "boot.hpp"
 #include "terminal.hpp"
 
+//#include "memory/paging/frame_allocator.hpp"
+
 [[gnu::ms_abi]]
-extern "C" void KernelMain(BootData* bootData)
+extern "C" void KernelMain(Boot::data* bootData)
 {
-    PSF1_FONT&  systemFont  = *bootData->pSystemFont;
-    ScreenData& screenData  = *bootData->pScreenData;
+    Boot::systemFont& systemFont = *bootData->pSystemFont;
+    Boot::screenData& screenData = *bootData->pScreenData;
+    Boot::memoryData& memoryData =  bootData->memoryData;
 
     BasicTerminal terminal(screenData, systemFont);
-    terminal.print("Hello, ", "world", "!\n", (u64)12345, (i64)-12345, (f64)-1.2345);
+    terminal.print("Hello, world!\n");
+    //Memory::Paging::frameAllocator pageFrameAllocator(memoryData);
+
+    while(true) {}
 
     return;
 }

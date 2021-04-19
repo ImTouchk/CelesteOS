@@ -6,13 +6,18 @@
 
 class BasicTerminal {
 public:
-    BasicTerminal(ScreenData& screenData, PSF1_FONT& sysFont);
+    BasicTerminal(Boot::screenData& screenData, Boot::systemFont& sysFont);
 
     template<typename... Args>
     void print(Args&&... args)
     {
         (write(static_cast<Args&&>(args)), ...);
     }
+
+    void write(const char* string);
+    void write(usize number);
+    void write(fsize number);
+    void write(isize number);
 
     void clear();
     void set_color(const u32 color);
@@ -26,16 +31,12 @@ private:
     void new_line();
     void parse_char(const char c);
     void write_char(const char c);
-    void write(const char* string);
-    void write(usize number);
-    void write(fsize number);
-    void write(isize number);
 
     void write_pixel(const ScreenPoint& point);
 
 private:
-    PSF1_FONT& m_Font;
-    ScreenData& m_ScreenData;
+    Boot::systemFont& m_Font;
+    Boot::screenData& m_ScreenData;
     ScreenPoint m_Cursor;
     u32 m_Color;
     u32* m_Buffer;
