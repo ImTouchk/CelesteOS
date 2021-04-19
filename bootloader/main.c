@@ -11,20 +11,23 @@ EFI_STATUS efi_main(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE* SystemTable)
     UINTN           MapKey;
     struct BootData KernelData;
 
+    ST = SystemTable;
+    BS = SystemTable->BootServices;
+
     SystemTable->ConIn->Reset(SystemTable->ConIn, FALSE);
     SystemTable->ConOut->ClearScreen(SystemTable->ConOut);
 
     InitializePrint(&ImageHandle, SystemTable);
 
     KernelData.pSystemFont   = LoadFont(&ImageHandle, SystemTable, NULL, L"zap-light16.psf");
-    KernelData.pScreenBuffer = InitializeScreen(&ImageHandle, SystemTable, SystemTable->BootServices);
-    KernelData.memoryMap     = LoadMemoryInfo(&ImageHandle, SystemTable, &MapKey);
+    KernelData.pScreenBuffer = InitializeScreen(SystemTable->BootServices);
+    KernelData.memoryMap     = LoadMemoryInfo(SystemTable, &MapKey);
 
     KernelBin = LoadFile(&ImageHandle, SystemTable, NULL, L"kernel.elf");
     
     LoadKernel(
-        &ImageHandle, 
-        SystemTable, 
+        ImageHandle,
+        SystemTable,
         SystemTable->BootServices, 
         KernelBin, 
         MapKey, 

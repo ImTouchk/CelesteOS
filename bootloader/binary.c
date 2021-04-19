@@ -25,7 +25,7 @@ static INTN memcmp(const void* a, const void* b, UINTN size)
 */
 
 VOID LoadKernel(
-    EFI_HANDLE* ImageHandle,
+    EFI_HANDLE ImageHandle,
     EFI_SYSTEM_TABLE* SystemTable,
     EFI_BOOT_SERVICES* BootServices,
     EFI_FILE* File,
@@ -65,7 +65,7 @@ VOID LoadKernel(
     PHeadersSize = Header.e_phnum * Header.e_phentsize;
     BootServices->AllocatePool(EfiLoaderData, PHeadersSize, (void**)&PHeaders);
     File->Read(File, &PHeadersSize, PHeaders);
-    
+
     for(
         PHeader = PHeaders;
         (UINT8*)PHeader < (UINT8*)PHeaders + PHeadersSize;
@@ -93,10 +93,8 @@ VOID LoadKernel(
 
     SimplePrint(L"Kernel binary loaded. Jumping to `KernelMain`.\r\n");
 
-    //BootServices->ExitBootServices(*ImageHandle, MapKey);
+    BootServices->ExitBootServices(ImageHandle, MapKey);
 
     void (*KernelMain)(struct BootData*) = (void (*)(struct BootData*))Header.e_entry;
     KernelMain(StartData);
-
-    SimplePrint(L"Left kernel main.\r\n");
 }

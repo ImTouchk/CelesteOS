@@ -56,19 +56,16 @@ extern struct PSF1_FONT* LoadFont(
 );
 
 extern struct MemoryMap LoadMemoryInfo(
-    __IN__ EFI_HANDLE* ImageHandle,
     __IN__ EFI_SYSTEM_TABLE* SystemTable,
     __OUT__ UINT64* MemoryMapKey
 );
 
 extern struct ScreenBuffer* InitializeScreen(
-    __IN__ EFI_HANDLE* ImageHandle,
-    __IN__ EFI_SYSTEM_TABLE* SystemTable,
     __IN__ EFI_BOOT_SERVICES* BootServices
 );
 
 extern VOID LoadKernel(
-    __IN__ EFI_HANDLE* ImageHandle,
+    __IN__ EFI_HANDLE ImageHandle,
     __IN__ EFI_SYSTEM_TABLE* SystemTable,
     __IN__ EFI_BOOT_SERVICES* BootServices,
     __IN__ EFI_FILE* File,
