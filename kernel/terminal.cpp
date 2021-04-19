@@ -37,12 +37,12 @@ void BasicTerminal::write(const char* buffer, ...)
 
         switch(*(++buffer)) {
             case 'd': {
-                i64 number = va_arg(args, i64);
+                i64 number = va_arg(args, i32);
                 write_int(number);
                 break;
             }
             case 'u': {
-                u64 number = va_arg(args, u64);
+                u64 number = va_arg(args, u32);
                 write_unsigned(number);
                 break;
             }
