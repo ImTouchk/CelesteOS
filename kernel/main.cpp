@@ -14,22 +14,19 @@ extern "C" void KernelMain(Boot::data* bootData)
     Boot::memoryData& memoryData =  bootData->memoryData;
 
     BasicTerminal terminal(screenData, systemFont);
-    terminal.set_color(0x00000000);
-    terminal.clear();
-
-    terminal.set_color(0x00FFFFFF);
+    terminal.clear(0x00000000);
     terminal.print("Hello, world!\n");
 
-    usize __kernelSize  = (usize)&__kernelEnd - (usize)&__kernelStart;
-    usize __kernelPages = __kernelSize / 4096 + 1;
+    const usize __kernelSize  = (usize)&__kernelEnd - (usize)&__kernelStart;
+    const usize __kernelPages = __kernelSize / 4096 + 1;
 
-    Memory::pageFrameAllocator frameAllocator(bootData->memoryData);
+    Memory::pageFrameAllocator frameAllocator = Memory::pageFrameAllocator(bootData->memoryData);
     frameAllocator.lock(&__kernelStart, __kernelPages);
 
     Memory::pageTable* pml4 = (Memory::pageTable*)frameAllocator.request();
     Memory::set(pml4, 0x1000, 0x00);
 
-    Memory::pageTableManager tableManager(pml4, frameAllocator);
+    Memory::pageTableManager tableManager = Memory::pageTableManager(pml4, frameAllocator);
 
     for(usize t = 0; t < frameAllocator.totalMemory(); t += 0x1000) {
         tableManager.map((void*)t, (void*)t);
@@ -46,8 +43,9 @@ extern "C" void KernelMain(Boot::data* bootData)
     __asm("mov %0, %%cr3" : : "r" (pml4));
     /* ^--- switch to the new table manager */
 
-    terminal.print("Total memory: ", frameAllocator.totalMemory() / 1024 / 1024, "MB\n");
-    terminal.print("Reserved memory: ", frameAllocator.reservedMemory() / 1024 / 1024, "MB\n");
+    terminal.print("Hello, world!\n");
+    //terminal.print("Total memory: ", frameAllocator.totalMemory() / 1024 / 1024, "MB\n");
+    //terminal.print("Reserved memory: ", frameAllocator.reservedMemory() / 1024 / 1024, "MB\n");
 
     while(true) {}
 
