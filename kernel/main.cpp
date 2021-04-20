@@ -17,7 +17,15 @@ extern "C" void KernelMain(Boot::data* bootData)
     terminal.clear(0x00000000);
     terminal.print("Hello, world!\n");
 
-    auto InitializeMemory = [&]() {
+    auto PrepareDescriptorTable = [&]() {
+        Memory::gdtDescriptor gdtDescriptor = {
+            .size   = sizeof(Memory::gdt) - 1,
+            .offset = (usize)&Memory::descriptorTable
+        };
+        load_gdt(&gdtDescriptor);
+    };
+
+    auto SetupPaging = [&]() {
         const usize __kernelSize  = (usize)&__kernelEnd - (usize)&__kernelStart;
         const usize __kernelPages = __kernelSize / 4096 + 1;
 
@@ -43,6 +51,11 @@ extern "C" void KernelMain(Boot::data* bootData)
 
         __asm("mov %0, %%cr3" : : "r" (pml4));
         /* ^--- switch to the new table manager */
+    };
+
+    auto InitializeMemory = [&]() {
+        PrepareDescriptorTable();
+        SetupPaging();
     };
 
     InitializeMemory();

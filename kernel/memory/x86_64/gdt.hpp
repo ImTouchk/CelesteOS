@@ -31,4 +31,6 @@ namespace Memory {
     extern gdt descriptorTable;
 }
 
+extern "C" void load_gdt(Memory::gdtDescriptor* descriptor);
+
 #endif // MEMORY_GDT_H
