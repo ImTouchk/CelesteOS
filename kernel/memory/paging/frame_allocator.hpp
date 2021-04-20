@@ -10,6 +10,7 @@ namespace Memory {
     class pageFrameAllocator {
     public:
         pageFrameAllocator(Boot::memoryData& memoryData);
+        pageFrameAllocator();
 
         void* request();
 

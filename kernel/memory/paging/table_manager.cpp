@@ -30,10 +30,16 @@ namespace Memory {
 }
 
 namespace Memory {
-    pageTableManager::pageTableManager(pageTable* pml4addr, pageFrameAllocator& _frameAllocator)
-        :  frameAllocator(_frameAllocator)
+    pageTableManager::pageTableManager(pageTable* pml4addr, pageFrameAllocator* _frameAllocator)
+        :  pFrameAllocator(_frameAllocator)
     {
         pPML4 = pml4addr;
+    }
+
+    pageTableManager::pageTableManager()
+    {
+        pPML4           = nullptr;
+        pFrameAllocator = nullptr;
     }
 
     void pageTableManager::map(void* virtualAddress, void* physicalAddress)
@@ -43,7 +49,7 @@ namespace Memory {
         pageTable*         pdp;
 
         if(!pde.get(pageTableFlag::Present)) {
-            pdp = (pageTable*)frameAllocator.request();
+            pdp = (pageTable*)pFrameAllocator->request();
             Memory::set(pdp, 0x1000, 0x00);
 
             pde.set((usize)pdp >> 12);
@@ -60,7 +66,7 @@ namespace Memory {
         pageTable* pd;
         pde = pdp->entries[indexer.pdi];
         if(!pde.get(pageTableFlag::Present)) {
-            pd = (pageTable*)frameAllocator.request();
+            pd = (pageTable*)pFrameAllocator->request();
             Memory::set(pd, 0x1000, 0x00);
 
             pde.set((usize)pd >> 12);
@@ -77,7 +83,7 @@ namespace Memory {
         pageTable* pt;
         pde = pd->entries[indexer.pti];
         if(!pde.get(pageTableFlag::Present)) {
-            pt = (pageTable*)frameAllocator.request();
+            pt = (pageTable*)pFrameAllocator->request();
             Memory::set(pt, 0x1000, 0x00);
 
             pde.set((usize)pt >> 12);

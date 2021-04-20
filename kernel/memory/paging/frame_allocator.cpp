@@ -75,6 +75,11 @@ namespace Memory {
         ReserveMemory();
     }
 
+    pageFrameAllocator::pageFrameAllocator()
+    {
+        
+    }
+
     usize LAST_INDEX = 0;
     void* pageFrameAllocator::request()
     {

@@ -36,11 +36,13 @@ namespace Memory {
     };
 
     struct pageTableManager {
-        pageTableManager(pageTable* pml4addr, pageFrameAllocator& _frameAllocator);
+        pageTableManager(pageTable* pml4addr, pageFrameAllocator* _frameAllocator);
+        pageTableManager();
+
         void map(void* virtualAddress, void* physicalAddress);
 
         pageTable* pPML4;
-        pageFrameAllocator& frameAllocator;
+        pageFrameAllocator* pFrameAllocator;
     };
 }
 
