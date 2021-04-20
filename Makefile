@@ -19,4 +19,4 @@ clean:
 	rm -r bootloader/.temp/
 	rm -r kernel/.temp/
 run:
-	qemu-system-x86_64 -pflash res/OVMF.fd -cdrom bin/celeste.img
+	qemu-system-x86_64 -pflash res/OVMF.fd -cdrom bin/celeste.img -s
