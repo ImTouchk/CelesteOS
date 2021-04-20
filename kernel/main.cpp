@@ -17,31 +17,36 @@ extern "C" void KernelMain(Boot::data* bootData)
     terminal.clear(0x00000000);
     terminal.print("Hello, world!\n");
 
-    const usize __kernelSize  = (usize)&__kernelEnd - (usize)&__kernelStart;
-    const usize __kernelPages = __kernelSize / 4096 + 1;
+    auto InitializeMemory = [&]() {
+        const usize __kernelSize  = (usize)&__kernelEnd - (usize)&__kernelStart;
+        const usize __kernelPages = __kernelSize / 4096 + 1;
 
-    Memory::pageFrameAllocator frameAllocator = Memory::pageFrameAllocator(bootData->memoryData);
-    frameAllocator.lock(&__kernelStart, __kernelPages);
+        Memory::pageFrameAllocator frameAllocator = Memory::pageFrameAllocator(bootData->memoryData);
+        frameAllocator.lock(&__kernelStart, __kernelPages);
 
-    Memory::pageTable* pml4 = (Memory::pageTable*)frameAllocator.request();
-    Memory::set(pml4, 0x1000, 0x00);
+        Memory::pageTable* pml4 = (Memory::pageTable*)frameAllocator.request();
+        Memory::set(pml4, 0x1000, 0x00);
 
-    Memory::pageTableManager tableManager = Memory::pageTableManager(pml4, frameAllocator);
+        Memory::pageTableManager tableManager = Memory::pageTableManager(pml4, frameAllocator);
 
-    for(usize t = 0; t < frameAllocator.totalMemory(); t += 0x1000) {
-        tableManager.map((void*)t, (void*)t);
-    }
+        for(usize t = 0; t < frameAllocator.totalMemory(); t += 0x1000) {
+            tableManager.map((void*)t, (void*)t);
+        }
 
-    usize scrBufferBase = (usize)bootData->pScreenData->pFrontBuffer;
-    usize scrBufferSize = (usize)bootData->pScreenData->bufferSize + 0x1000;
-    frameAllocator.lock((void*)scrBufferBase, scrBufferSize / 0x10000 + 1);
+        usize scrBufferBase = (usize)bootData->pScreenData->pFrontBuffer;
+        usize scrBufferSize = (usize)bootData->pScreenData->bufferSize + 0x1000;
+        frameAllocator.lock((void*)scrBufferBase, scrBufferSize / 0x10000 + 1);
 
-    for(usize t = scrBufferBase; t < (scrBufferBase + scrBufferSize); t += 4096) {
-        tableManager.map((void*)t, (void*)t);
-    }
+        for(usize t = scrBufferBase; t < (scrBufferBase + scrBufferSize); t += 4096) {
+            tableManager.map((void*)t, (void*)t);
+        }
 
-    __asm("mov %0, %%cr3" : : "r" (pml4));
-    /* ^--- switch to the new table manager */
+        __asm("mov %0, %%cr3" : : "r" (pml4));
+        /* ^--- switch to the new table manager */
+    };
+
+    InitializeMemory();
+
 
     terminal.print("Hello, world!\n");
     //terminal.print("Total memory: ", frameAllocator.totalMemory() / 1024 / 1024, "MB\n");
