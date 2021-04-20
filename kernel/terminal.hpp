@@ -19,7 +19,7 @@ public:
     void write(fsize number);
     void write(isize number);
 
-    void clear();
+    void clear(const u32 color);
     void set_color(const u32 color);
 
 private:

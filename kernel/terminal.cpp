@@ -8,10 +8,10 @@ BasicTerminal::BasicTerminal(Boot::screenData& screenData, Boot::systemFont& sys
     m_Buffer = static_cast<u32*>(m_ScreenData.pFrontBuffer);
 }
 
-void BasicTerminal::clear()
+void BasicTerminal::clear(const u32 color)
 {
     for(u32 i = 0; i < m_ScreenData.bufferSize; i++) {
-        m_Buffer[i] = m_Color;
+        m_Buffer[i] = color;
     }
     m_Cursor = { .x = 0, .y = 0 };
 }
@@ -102,7 +102,7 @@ void BasicTerminal::new_line()
     m_Cursor.y += 16;
     if(m_Cursor.y >= m_ScreenData.height) {
         m_Color = 0x00FFFFFF;
-        clear();
+        clear(0x00000000);
     }
 }
 
