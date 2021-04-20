@@ -1,6 +1,6 @@
 IMAGE_FILE := bin/celeste.img
 
-.PHONY: all clean setup
+.PHONY: all clean setup run
 setup:
 	dd if=/dev/zero of=${IMAGE_FILE} bs=1k count=1440
 	mformat -i ${IMAGE_FILE} -f 1440 ::
@@ -14,9 +14,11 @@ all:
 	@echo "==================== KERNEL ===================="
 	cd kernel     && make all
 	@echo "==================== IMAGE ===================="
-	mcopy -o -i ${IMAGE_FILE} bin/BOOTX64.EFI ::/EFI/BOOT
+	mcopy -o -i ${IMAGE_FILE} bin/BOOTX64.efi ::/EFI/BOOT
 	mcopy -o -i ${IMAGE_FILE} bin/kernel.elf  ::
 
 clean:
 	rm -r bootloader/.temp/
 	rm -r kernel/.temp/
+run:
+	qemu-system-x86_64 -pflash res/OVMF.fd -cdrom bin/celeste.img
