@@ -2,9 +2,7 @@
 #include "boot.hpp"
 #include "terminal.hpp"
 #include "memory/memory.hpp"
-
-extern usize __kernelEnd;
-extern usize __kernelStart;
+#include "interrupts/interrupts.hpp"
 
 [[gnu::ms_abi]]
 extern "C" void KernelMain(Boot::data* bootData)
@@ -17,51 +15,12 @@ extern "C" void KernelMain(Boot::data* bootData)
     terminal.clear(0x00000000);
     terminal.print("Hello, world!\n");
 
-    auto PrepareDescriptorTable = [&]() {
-        Memory::gdtDescriptor gdtDescriptor = {
-            .size   = sizeof(Memory::gdt) - 1,
-            .offset = (usize)&Memory::descriptorTable
-        };
-        load_gdt(&gdtDescriptor);
-    };
+    Memory::runtime memoryRuntime(*bootData, terminal);
 
-    auto SetupPaging = [&]() {
-        const usize __kernelSize  = (usize)&__kernelEnd - (usize)&__kernelStart;
-        const usize __kernelPages = __kernelSize / 4096 + 1;
+    Interrupt::specialRegister idtr;
+    Interrupt::initialize(memoryRuntime, idtr);
 
-        Memory::pageFrameAllocator frameAllocator = Memory::pageFrameAllocator(bootData->memoryData);
-        frameAllocator.lock(&__kernelStart, __kernelPages);
-
-        Memory::pageTable* pml4 = (Memory::pageTable*)frameAllocator.request();
-        Memory::set(pml4, 0x1000, 0x00);
-
-        Memory::pageTableManager tableManager = Memory::pageTableManager(pml4, frameAllocator);
-
-        for(usize t = 0; t < frameAllocator.totalMemory(); t += 0x1000) {
-            tableManager.map((void*)t, (void*)t);
-        }
-
-        usize scrBufferBase = (usize)bootData->pScreenData->pFrontBuffer;
-        usize scrBufferSize = (usize)bootData->pScreenData->bufferSize + 0x1000;
-        frameAllocator.lock((void*)scrBufferBase, scrBufferSize / 0x10000 + 1);
-
-        for(usize t = scrBufferBase; t < (scrBufferBase + scrBufferSize); t += 4096) {
-            tableManager.map((void*)t, (void*)t);
-        }
-
-        __asm("mov %0, %%cr3" : : "r" (pml4));
-        /* ^--- switch to the new table manager */
-    };
-
-    auto InitializeMemory = [&]() {
-        PrepareDescriptorTable();
-        SetupPaging();
-    };
-
-    InitializeMemory();
-
-
-    terminal.print("Hello, world!\n");
+    terminal.print("Hello, again!\n");
     //terminal.print("Total memory: ", frameAllocator.totalMemory() / 1024 / 1024, "MB\n");
     //terminal.print("Reserved memory: ", frameAllocator.reservedMemory() / 1024 / 1024, "MB\n");
 
