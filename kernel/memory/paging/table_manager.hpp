@@ -6,7 +6,7 @@
 #include "frame_allocator.hpp"
 
 namespace Memory {
-    enum class PageTableFlag {
+    enum class pageTableFlag {
         Present       = 0,
         ReadWrite     = 1,
         UserSuper     = 2,
@@ -22,8 +22,8 @@ namespace Memory {
     };
 
     struct pageDirectoryEntry {
-        void set(PageTableFlag flag, bool state);
-        bool get(PageTableFlag flag);
+        void set(pageTableFlag flag, bool state);
+        bool get(pageTableFlag flag);
 
         void set(u64 address);
         u64 get();

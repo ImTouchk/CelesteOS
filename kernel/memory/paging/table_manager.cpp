@@ -2,7 +2,7 @@
 #include "table_manager.hpp"
 
 namespace Memory {
-    void pageDirectoryEntry::set(PageTableFlag flag, bool state)
+    void pageDirectoryEntry::set(pageTableFlag flag, bool state)
     {
         u64 bitSelector = (u64)1 << static_cast<u64>(flag);
         value &= ~bitSelector;
@@ -10,7 +10,7 @@ namespace Memory {
             value |= bitSelector;
     }
 
-    bool pageDirectoryEntry::get(PageTableFlag flag)
+    bool pageDirectoryEntry::get(pageTableFlag flag)
     {
         u64 bitSelector = (u64)1 << static_cast<u64>(flag);
         return (value & bitSelector) > 0;
@@ -42,13 +42,13 @@ namespace Memory {
         pageDirectoryEntry pde = pPML4->entries[indexer.pdpi];
         pageTable*         pdp;
 
-        if(!pde.get(PageTableFlag::Present)) {
+        if(!pde.get(pageTableFlag::Present)) {
             pdp = (pageTable*)frameAllocator.request();
             Memory::set(pdp, 0x1000, 0x00);
 
             pde.set((usize)pdp >> 12);
-            pde.set(PageTableFlag::Present, true);
-            pde.set(PageTableFlag::ReadWrite, true);
+            pde.set(pageTableFlag::Present, true);
+            pde.set(pageTableFlag::ReadWrite, true);
 
             pPML4->entries[indexer.pdpi] = pde;
         } else {
@@ -59,13 +59,13 @@ namespace Memory {
 
         pageTable* pd;
         pde = pdp->entries[indexer.pdi];
-        if(!pde.get(PageTableFlag::Present)) {
+        if(!pde.get(pageTableFlag::Present)) {
             pd = (pageTable*)frameAllocator.request();
             Memory::set(pd, 0x1000, 0x00);
 
             pde.set((usize)pd >> 12);
-            pde.set(PageTableFlag::Present, true);
-            pde.set(PageTableFlag::ReadWrite, true);
+            pde.set(pageTableFlag::Present, true);
+            pde.set(pageTableFlag::ReadWrite, true);
 
             pdp->entries[indexer.pdi] = pde;
         } else {
@@ -76,13 +76,13 @@ namespace Memory {
 
         pageTable* pt;
         pde = pd->entries[indexer.pti];
-        if(!pde.get(PageTableFlag::Present)) {
+        if(!pde.get(pageTableFlag::Present)) {
             pt = (pageTable*)frameAllocator.request();
             Memory::set(pt, 0x1000, 0x00);
 
             pde.set((usize)pt >> 12);
-            pde.set(PageTableFlag::Present, true);
-            pde.set(PageTableFlag::ReadWrite, true);
+            pde.set(pageTableFlag::Present, true);
+            pde.set(pageTableFlag::ReadWrite, true);
 
             pd->entries[indexer.pti] = pde;
         } else {
@@ -91,8 +91,8 @@ namespace Memory {
 
         pde = pt->entries[indexer.pi];
         pde.set((usize)physicalAddress >> 12);
-        pde.set(PageTableFlag::Present, true);
-        pde.set(PageTableFlag::ReadWrite, true);
+        pde.set(pageTableFlag::Present, true);
+        pde.set(pageTableFlag::ReadWrite, true);
 
         pt->entries[indexer.pi] = pde;
     }
