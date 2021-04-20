@@ -14,9 +14,6 @@ all:
 	cd bootloader && make all
 	@echo "==================== KERNEL ===================="
 	cd kernel     && make all
-	@echo "==================== IMAGE ===================="
-	mcopy -o -i ${IMAGE_FILE} bin/BOOTX64.efi ::/EFI/BOOT
-	mcopy -o -i ${IMAGE_FILE} bin/kernel.elf  ::
 
 clean:
 	rm -r bootloader/.temp/

@@ -13,5 +13,6 @@ $(OBJ): .temp/%.o : %.cpp
 .PHONY: all clean
 all: $(OBJ)
 	${LD} ${LDFLAGS} -o ../bin/kernel.elf ${OBJ}
+	mcopy -o -i ../bin/celeste.img ../bin/kernel.elf ::
 clean:
 	rm -r .temp/

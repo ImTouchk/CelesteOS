@@ -14,3 +14,4 @@ $(OBJ): .temp/%.o : %.c
 all: $(OBJ)
 	${CC} ${CFLAGS} ${INCLUDES} -c -o .temp/data.o gnu-efi/lib/data.c
 	${CC} ${LDFLAGS} -o ../bin/BOOTX64.efi ${OBJ} .temp/data.o
+	mcopy -o -i ../bin/celeste.img ../bin/BOOTX64.efi ::/EFI/BOOT
