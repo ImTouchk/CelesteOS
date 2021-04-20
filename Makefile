@@ -2,6 +2,7 @@ IMAGE_FILE := bin/celeste.img
 
 .PHONY: all clean setup run
 setup:
+	mkdir bin
 	dd if=/dev/zero of=${IMAGE_FILE} bs=1k count=1440
 	mformat -i ${IMAGE_FILE} -f 1440 ::
 	mmd     -i ${IMAGE_FILE} ::/EFI
