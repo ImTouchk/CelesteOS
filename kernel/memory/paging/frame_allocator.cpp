@@ -75,13 +75,14 @@ namespace Memory {
         ReserveMemory();
     }
 
+    usize LAST_INDEX = 0;
     void* pageFrameAllocator::request()
     {
-        for(usize i = 0; i < m_Bitmap.size * 8; i++) {
-            if(m_Bitmap.get(i) == true)
+        for(; LAST_INDEX < m_Bitmap.size * 8; LAST_INDEX++) {
+            if(m_Bitmap.get(LAST_INDEX) == true)
                 continue;
 
-            void* address = (void*)(i * 4096);
+            void* address = (void*)(LAST_INDEX * 4096);
             lock(address);
             return address;
         }
@@ -99,6 +100,9 @@ namespace Memory {
         if(m_Bitmap.set(index, false)) {
             m_FreeMemory += 4096;
             m_UsedMemory -= 4096;
+            if(LAST_INDEX > index) {
+                LAST_INDEX = index;
+            }
         }
     }
 
@@ -137,6 +141,9 @@ namespace Memory {
         if(m_Bitmap.set(index, false)) {
             m_FreeMemory     += 4096;
             m_ReservedMemory -= 4096;
+            if(LAST_INDEX > index) {
+                LAST_INDEX = index;
+            }
         }
     }
 
