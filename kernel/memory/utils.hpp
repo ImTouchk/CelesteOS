@@ -3,6 +3,8 @@
 
 #include "../types.hpp"
 
+extern "C" void memcpy(void* dst, const void* src, usize num);
+
 namespace Memory {
     void set(void* buffer, usize len, usize value);
 }
