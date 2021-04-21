@@ -30,6 +30,7 @@ extern "C" void KernelMain(Boot::data* bootData)
     BasicTerminal terminal(screenData, systemFont);
     terminal.clear(0x00000000);
     terminal.print("Hello, world!\n");
+    pTerminal = &terminal;
 
     Memory::runtime memoryRuntime(*bootData, terminal);
 
@@ -37,19 +38,11 @@ extern "C" void KernelMain(Boot::data* bootData)
     Interrupt::initialize(memoryRuntime, idtr);
 
     terminal.print("Hello again!\n");
-    pTerminal = &terminal;
-
-    int* asd = (int*)0x8000000000;
-    *asd = 99;
+//    int* asd = (int*)0x8000000000;
+//    *asd = 99;
 
     terminal.clear(0x00000000);
     terminal.print("Hello once more!\n");
-    //terminal.print("asd");
-    //terminal.print("Hello, again!\n");
-    //terminal.print("Total memory: ", frameAllocator.totalMemory() / 1024 / 1024, "MB\n");
-    //terminal.print("Reserved memory: ", frameAllocator.reservedMemory() / 1024 / 1024, "MB\n");
 
     while (true) {}
-
-    return;
 }

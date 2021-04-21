@@ -1,5 +1,6 @@
 #include "idt.hpp"
 #include "interrupts.hpp"
+#include "io.hpp"
 
 namespace Interrupt {
     void entry::setOffset(usize offset)
@@ -40,6 +41,16 @@ namespace Interrupt {
         generalProtFault->typeAttributes = typeAttributes::interruptGate;
         generalProtFault->selector = 0x08;
 
+        entry* keyboardInter = (entry*)(idtr.offset + 0x21 * sizeof(entry));
+        keyboardInter->setOffset((usize)handlers::keyboardInterrupt);
+        keyboardInter->typeAttributes = typeAttributes::interruptGate;
+        keyboardInter->selector = 0x08;
+
         __asm("lidt %0" : : "m" (idtr));
+
+        Interrupt::remapController();
+        IO::Bus::send(PIC1_DATA, 0b11111101);
+        IO::Bus::send(PIC2_DATA, 0b11111111);
+        __asm("sti");
     }
 }
