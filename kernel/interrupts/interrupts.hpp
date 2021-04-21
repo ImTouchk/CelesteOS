@@ -5,7 +5,12 @@
 
 namespace Interrupt {
     struct frame;
-    __attribute__((interrupt)) void handler(frame* frame);
+
+    namespace handlers {
+        __attribute__((interrupt)) void pageFault(frame* frame);
+        __attribute__((interrupt)) void doubleFault(frame* frame);
+        __attribute__((interrupt)) void generalProtFault(frame* frame);
+    }
 }
 
 #endif // INTERRUPTS_H

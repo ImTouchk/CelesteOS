@@ -26,9 +26,19 @@ namespace Interrupt {
         };
 
         entry* pageFault = (entry*)(idtr.offset + 0xE * sizeof(entry));
-        pageFault->setOffset((usize)handler);
+        pageFault->setOffset((usize)handlers::pageFault);
         pageFault->typeAttributes = typeAttributes::interruptGate;
         pageFault->selector = 0x08;
+
+        entry* doubleFault = (entry*)(idtr.offset + 0x8 * sizeof(entry));
+        doubleFault->setOffset((usize)handlers::doubleFault);
+        doubleFault->typeAttributes = typeAttributes::interruptGate;
+        doubleFault->selector = 0x08;
+
+        entry* generalProtFault = (entry*)(idtr.offset + 0xD * sizeof(entry));
+        generalProtFault->setOffset((usize)handlers::generalProtFault);
+        generalProtFault->typeAttributes = typeAttributes::interruptGate;
+        generalProtFault->selector = 0x08;
 
         __asm("lidt %0" : : "m" (idtr));
     }

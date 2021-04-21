@@ -1,11 +1,22 @@
 #include "interrupts.hpp"
 
-namespace Interrupt {
-    __attribute__((interrupt)) void handler(frame* frame)
+extern void Panic(const char* message);
+
+namespace Interrupt::handlers {
+    __attribute__((interrupt)) void pageFault(frame* frame)
     {
-        while(true) {
-            __asm("cli");
-            __asm("hlt");
-        }
+        Panic("Page fault occurred.");
+        while(true) {}
+    }
+
+    __attribute__((interrupt)) void doubleFault(frame* frame)
+    {
+        Panic("Double fault occurred.");
+        while(true) {}
+    }
+
+    __attribute__((interrupt)) void generalProtFault(frame* frame)
+    {
+        while(true) {}
     }
 }
