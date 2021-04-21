@@ -9,7 +9,7 @@ BasicTerminal* pTerminal = nullptr;
 void Panic(const char* message)
 {
     pTerminal->clear(0x003276E3);
-    pTerminal->set_color(0x00000000);
+    pTerminal->set_color(0x00FFFFFF);
     pTerminal->print("KERNEL PANIC.\n");
     pTerminal->print("Error message: ", message, "\n");
     pTerminal->print("System shutdown.\n");
@@ -36,13 +36,15 @@ extern "C" void KernelMain(Boot::data* bootData)
     Interrupt::specialRegister idtr;
     Interrupt::initialize(memoryRuntime, idtr);
 
-    terminal.print("Hello again!");
+    terminal.print("Hello again!\n");
     pTerminal = &terminal;
 
-    int* a = (int*)0x8000000000;
-    *a = 99;
+    int* asd = (int*)0x8000000000;
+    *asd = 99;
 
-    terminal.print("asd");
+    terminal.clear(0x00000000);
+    terminal.print("Hello once more!\n");
+    //terminal.print("asd");
     //terminal.print("Hello, again!\n");
     //terminal.print("Total memory: ", frameAllocator.totalMemory() / 1024 / 1024, "MB\n");
     //terminal.print("Reserved memory: ", frameAllocator.reservedMemory() / 1024 / 1024, "MB\n");

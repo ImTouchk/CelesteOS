@@ -40,6 +40,7 @@ private:
     ScreenPoint m_Cursor;
     u32 m_Color;
     u32* m_Buffer;
+    u32 m_BufferSize;
 };
 
 #endif // TERMINAL_H

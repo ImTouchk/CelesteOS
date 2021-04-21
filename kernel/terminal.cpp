@@ -3,16 +3,28 @@
 BasicTerminal::BasicTerminal(Boot::screenData& screenData, Boot::systemFont& sysFont)
     : m_ScreenData(screenData), m_Font(sysFont)
 {
-    m_Cursor = { .x = 0, .y = 0 };
-    m_Color  = 0x00FFFFFF;
-    m_Buffer = static_cast<u32*>(m_ScreenData.pFrontBuffer);
+    m_Cursor     = { .x = 0, .y = 0 };
+    m_Color      = 0x00FFFFFF;
+    m_Buffer     = static_cast<u32*>(m_ScreenData.pFrontBuffer);
+    m_BufferSize = m_ScreenData.pxPerScanline * m_ScreenData.height;
 }
 
 void BasicTerminal::clear(const u32 color)
 {
-    for(u32 i = 0; i < m_ScreenData.bufferSize; i++) {
-        m_Buffer[i] = color;
+    if(m_ScreenData.pxPerScanline == m_ScreenData.width) {
+        /* execute fast method (which works on most computers) */
+        for(u32 i = 0; i < m_BufferSize; i++) {
+            m_Buffer[i] = color;
+        }
+    } else {
+        /* execute slower method */
+        for(u32 x = 0; x < m_ScreenData.pxPerScanline; x++) {
+            for(u32 y = 0; y < m_ScreenData.height; y++) {
+                m_Buffer[y * m_ScreenData.pxPerScanline + x] = color;
+            }
+        }
     }
+
     m_Cursor = { .x = 0, .y = 0 };
 }
 
