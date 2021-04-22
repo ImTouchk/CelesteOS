@@ -1,9 +1,8 @@
 #include "terminal.hpp"
 
 BasicTerminal::BasicTerminal(Boot::screenData& screenData, Boot::systemFont& sysFont)
-    : m_ScreenData(screenData), m_Font(sysFont)
+    : m_ScreenData(screenData), m_Font(sysFont), m_Cursor{0, 0 }
 {
-    m_Cursor     = { .x = 0, .y = 0 };
     m_Color      = 0x00FFFFFF;
     m_Buffer     = static_cast<u32*>(m_ScreenData.pFrontBuffer);
     m_BufferSize = m_ScreenData.pxPerScanline * m_ScreenData.height;
@@ -91,7 +90,7 @@ void BasicTerminal::write(usize number)
     }
 
     for(byte i = 0; i < count; i++) {
-        string[i] = '0' + (reversed % 10);
+        string[i] = '0' + (byte)(reversed % 10);
         reversed /= 10;
     }
 
@@ -113,25 +112,28 @@ void BasicTerminal::new_line()
     m_Cursor.x = 0;
     m_Cursor.y += 16;
     if(m_Cursor.y >= m_ScreenData.height) {
-        m_Color = 0x00FFFFFF;
         clear(0x00000000);
     }
 }
 
 void BasicTerminal::parse_char(const char c)
 {
+    if(m_Cursor.y >= m_ScreenData.height) {
+        clear(0x00000000);
+    }
+
     if(c == '\n') {
         new_line();
         return;
     }
 
-    write_char(c);
+    write(c);
     m_Cursor.x += 8;
     if(m_Cursor.x >= m_ScreenData.pxPerScanline)
         new_line();
 }
 
-void BasicTerminal::write_char(const char c)
+void BasicTerminal::write(const char c)
 {
     char* fontGlyph    = (char*)m_Font.pGlyphBuffer + (c * m_Font.pHeader->charSize);
     ScreenPoint& point = m_Cursor;
