@@ -1,5 +1,6 @@
 #include "io.hpp"
 #include "interrupts.hpp"
+#include "keyboard.hpp"
 
 extern void Panic(const char* message);
 extern BasicTerminal* pTerminal;
@@ -24,9 +25,8 @@ namespace Interrupt::handlers {
 
     __attribute__((interrupt)) void keyboardInterrupt(frame* frame)
     {
-        pTerminal->print("a");
-
         byte scanCode = IO::Bus::recieve(0x60);
+        Interrupt::qwertyKB::handler(scanCode);
         PIC::endMaster();
     }
 }
