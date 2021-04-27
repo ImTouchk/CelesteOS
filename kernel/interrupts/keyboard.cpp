@@ -3,6 +3,10 @@
 
 extern BasicTerminal* pTerminal;
 
+static bool isLeftShiftPressed  = false;
+static bool isRightShiftPressed = false;
+
+
 namespace Interrupt::qwertyKB {
     const char asciiTable[] = {
         0, 0, '1', '2', '3',
@@ -24,12 +28,43 @@ namespace Interrupt::qwertyKB {
     char translate(byte scancode, bool uppercase)
     {
         if(scancode > 58) return 0;
+        if(uppercase) return asciiTable[scancode] - 32;
         return asciiTable[scancode];
     }
 
     void handler(byte scancode)
     {
-        char ascii = translate(scancode, false);
+        switch(scancode) {
+            case specialKeys::Spacebar: {
+                pTerminal->space();
+                return;
+            }
+
+            case specialKeys::LeftShift: isLeftShiftPressed = true; return;
+            case specialKeys::LeftShift + 0x80: {
+                isLeftShiftPressed = false;
+                return;
+            }
+
+            case specialKeys::RightShift: isRightShiftPressed = true; return;
+            case specialKeys::RightShift + 0x80: {
+                isRightShiftPressed = false;
+                return;
+            }
+
+            case specialKeys::Enter: {
+                pTerminal->new_line();
+                return;
+            }
+
+            case specialKeys::Backspace: {
+                pTerminal->clear_last();
+                return;
+            }
+            default: break;
+        }
+
+        char ascii = translate(scancode, isLeftShiftPressed | isRightShiftPressed);
         char string[2] = { ascii, '\0' };
         if(ascii != 0) {
             pTerminal->print(string);
