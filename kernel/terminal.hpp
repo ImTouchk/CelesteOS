@@ -14,8 +14,9 @@ public:
         (write(static_cast<Args&&>(args)), ...);
     }
 
-    void clear(const u32 color);
-    void set_color(const u32 color);
+    void clear();
+    void set_foreground(const u32 color);
+    void set_background(const u32 color);
     void new_line();
     void clear_last();
     void space();
@@ -39,7 +40,8 @@ private:
     Boot::systemFont& m_Font;
     Boot::screenData& m_ScreenData;
     ScreenPoint m_Cursor;
-    u32  m_Color;
+    u32  m_TextColor;
+    u32  m_BackColor;
     u32* m_Buffer;
     u32  m_BufferSize;
 };

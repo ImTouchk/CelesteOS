@@ -3,23 +3,29 @@
 BasicTerminal::BasicTerminal(Boot::screenData& screenData, Boot::systemFont& sysFont)
     : m_ScreenData(screenData), m_Font(sysFont), m_Cursor{0, 0 }
 {
-    m_Color      = 0x00FFFFFF;
+    m_TextColor  = 0x00FFFFFF;
+    m_BackColor  = 0x00000000;
     m_Buffer     = static_cast<u32*>(m_ScreenData.pFrontBuffer);
     m_BufferSize = m_ScreenData.pxPerScanline * m_ScreenData.height;
 }
 
-void BasicTerminal::clear(const u32 color)
-{
+void BasicTerminal::clear()
+{   
+    /* 
+        Some computers reserve some memory after pxPerScanline
+        so the width and pxPerScanline don't always match up.
+    */
+
     if(m_ScreenData.pxPerScanline == m_ScreenData.width) {
         /* execute fast method (which works on most computers) */
         for(u32 i = 0; i < m_BufferSize; i++) {
-            m_Buffer[i] = color;
+            m_Buffer[i] = m_BackColor;
         }
     } else {
         /* execute slower method */
         for(u32 x = 0; x < m_ScreenData.pxPerScanline; x++) {
             for(u32 y = 0; y < m_ScreenData.height; y++) {
-                m_Buffer[y * m_ScreenData.pxPerScanline + x] = color;
+                m_Buffer[y * m_ScreenData.pxPerScanline + x] = m_BackColor;
             }
         }
     }
@@ -27,9 +33,14 @@ void BasicTerminal::clear(const u32 color)
     m_Cursor = { .x = 0, .y = 0 };
 }
 
-void BasicTerminal::set_color(const u32 color)
+void BasicTerminal::set_background(const u32 color)
 {
-    m_Color = color;
+    m_BackColor = color;
+}
+
+void BasicTerminal::set_foreground(const u32 color)
+{
+    m_TextColor = color;
 }
 
 void BasicTerminal::write(fsize number)
@@ -112,7 +123,7 @@ void BasicTerminal::new_line()
     m_Cursor.x  = 0;
     m_Cursor.y += 16;
     if(m_Cursor.y >= m_ScreenData.height) {
-        clear(0x00000000);
+        clear();
     }
 }
 
@@ -123,7 +134,7 @@ void BasicTerminal::space()
         new_line();
     
     if(m_Cursor.y >= m_ScreenData.height)
-        clear(0x00000000);
+        clear();
 }
 
 void BasicTerminal::clear_last()
@@ -139,19 +150,26 @@ void BasicTerminal::clear_last()
         m_Cursor.x -= 8;
     }
 
+    u32          color = m_TextColor; /* save previous color */
     ScreenPoint& point = m_Cursor;
+    m_TextColor        = 0x00000000;
+    /* 
+        write_pixel() sets the color to m_TextColor
+        so it has to be changed to black temporarily
+    */
     for(u32 y = point.y; y < (point.y + 16); y++) {
         for(u32 x = point.x; x < (point.x + 8); x++) {
             ScreenPoint current = { x, y };
             write_pixel(current);
         }
     }
+    m_TextColor = color;
 }
 
 void BasicTerminal::parse_char(const char c)
 {
     if(m_Cursor.y >= m_ScreenData.height) {
-        clear(0x00000000);
+        clear();
     }
 
     if(c == '\n') {
@@ -185,5 +203,5 @@ void BasicTerminal::write(const char c)
 void BasicTerminal::write_pixel(const ScreenPoint& point)
 {
     const u32 index = point.y * m_ScreenData.pxPerScanline + point.x;
-    m_Buffer[index] = m_Color;
+    m_Buffer[index] = m_TextColor;
 }

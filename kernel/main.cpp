@@ -8,8 +8,10 @@ BasicTerminal* pTerminal = nullptr;
 
 void Panic(const char* message)
 {
-    pTerminal->clear(0x003276E3);
-    pTerminal->set_color(0x00FFFFFF);
+    pTerminal->set_background(0x003276E3);
+    pTerminal->set_foreground(0x00FFFFFF);
+    
+    pTerminal->clear();
     pTerminal->print("KERNEL PANIC.\n");
     pTerminal->print("Error message: ", message, "\n");
     pTerminal->print("System shutdown.\n");
@@ -28,7 +30,7 @@ extern "C" void KernelMain(Boot::data* bootData)
     Boot::memoryData& memoryData = bootData->memoryData;
 
     BasicTerminal terminal(screenData, systemFont);
-    terminal.clear(0x00000000);
+    terminal.clear();
     terminal.print("Hello, world!\n");
     pTerminal = &terminal;
 
@@ -41,7 +43,7 @@ extern "C" void KernelMain(Boot::data* bootData)
 //    int* asd = (int*)0x8000000000;
 //    *asd = 99;
 
-    terminal.clear(0x00000000);
+    terminal.clear();
     terminal.print("Hello once more!\n");
 
     while (true) {}
