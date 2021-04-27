@@ -142,7 +142,7 @@ void BasicTerminal::clear_last()
     /* if x is 0, the last character was on a previous line */
     if(m_Cursor.x == 0) {
         m_Cursor.y -= 16;
-        m_Cursor.x = m_ScreenData.pxPerScanline;
+        m_Cursor.x = m_ScreenData.pxPerScanline - 8;
     } else if(m_Cursor.x == 0 && m_Cursor.y == 0) { 
         /* screen was cleared, nothing to do */
         return;
