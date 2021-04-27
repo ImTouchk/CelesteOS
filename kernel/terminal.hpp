@@ -16,6 +16,9 @@ public:
 
     void clear(const u32 color);
     void set_color(const u32 color);
+    void new_line();
+    void clear_last();
+    void space();
 
 private:
     struct ScreenPoint {
@@ -23,7 +26,6 @@ private:
         u32 y;
     };
 
-    void new_line();
     void parse_char(const char c);
     void write(const char c);
     void write(const char* string);
@@ -37,9 +39,9 @@ private:
     Boot::systemFont& m_Font;
     Boot::screenData& m_ScreenData;
     ScreenPoint m_Cursor;
-    u32 m_Color;
+    u32  m_Color;
     u32* m_Buffer;
-    u32 m_BufferSize;
+    u32  m_BufferSize;
 };
 
 #endif // TERMINAL_H

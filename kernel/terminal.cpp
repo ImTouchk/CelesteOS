@@ -109,11 +109,26 @@ void BasicTerminal::write(const char* string)
 
 void BasicTerminal::new_line()
 {
-    m_Cursor.x = 0;
+    m_Cursor.x  = 0;
     m_Cursor.y += 16;
     if(m_Cursor.y >= m_ScreenData.height) {
         clear(0x00000000);
     }
+}
+
+void BasicTerminal::space()
+{
+    m_Cursor.x += 8;
+    if(m_Cursor.x >= m_ScreenData.pxPerScanline)
+        new_line();
+    
+    if(m_Cursor.y >= m_ScreenData.height)
+        clear(0x00000000);
+}
+
+void BasicTerminal::clear_last()
+{
+
 }
 
 void BasicTerminal::parse_char(const char c)
