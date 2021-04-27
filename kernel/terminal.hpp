@@ -23,8 +23,8 @@ public:
 
 private:
     struct ScreenPoint {
-        u32 x;
-        u32 y;
+        usize x;
+        usize y;
     };
 
     void parse_char(const char c);

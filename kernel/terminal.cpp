@@ -18,13 +18,13 @@ void BasicTerminal::clear()
 
     if(m_ScreenData.pxPerScanline == m_ScreenData.width) {
         /* execute fast method (which works on most computers) */
-        for(u32 i = 0; i < m_BufferSize; i++) {
+        for(usize i = 0; i < m_BufferSize; i++) {
             m_Buffer[i] = m_BackColor;
         }
     } else {
         /* execute slower method */
-        for(u32 x = 0; x < m_ScreenData.pxPerScanline; x++) {
-            for(u32 y = 0; y < m_ScreenData.height; y++) {
+        for(usize x = 0; x < m_ScreenData.pxPerScanline; x++) {
+            for(usize y = 0; y < m_ScreenData.height; y++) {
                 m_Buffer[y * m_ScreenData.pxPerScanline + x] = m_BackColor;
             }
         }
@@ -57,7 +57,7 @@ void BasicTerminal::write(fsize number)
     char string[DECIMAL_COUNT + 1];
     byte count = 0;
 
-    f64 decimals = number - static_cast<isize>(number);
+    fsize decimals = number - static_cast<isize>(number);
     for(byte i = 0; i < DECIMAL_COUNT; i++) {
         decimals *= 10;
         string[count++] = '0' + static_cast<isize>(decimals);
@@ -157,8 +157,8 @@ void BasicTerminal::clear_last()
         write_pixel() sets the color to m_TextColor
         so it has to be changed to black temporarily
     */
-    for(u32 y = point.y; y < (point.y + 16); y++) {
-        for(u32 x = point.x; x < (point.x + 8); x++) {
+    for(usize y = point.y; y < (point.y + 16); y++) {
+        for(usize x = point.x; x < (point.x + 8); x++) {
             ScreenPoint current = { x, y };
             write_pixel(current);
         }
@@ -188,8 +188,8 @@ void BasicTerminal::write(const char c)
     char* fontGlyph    = (char*)m_Font.pGlyphBuffer + (c * m_Font.pHeader->charSize);
     ScreenPoint& point = m_Cursor;
 
-    for(u32 y = point.y; y < (point.y + 16); y++) {
-        for(u32 x = point.x; x < (point.x + 8); x++) {
+    for(usize y = point.y; y < (point.y + 16); y++) {
+        for(usize x = point.x; x < (point.x + 8); x++) {
             bool isGlyphPixel = (*fontGlyph & (0b100000000 >> (x - point.x))) > 0;
             if(isGlyphPixel) {
                 ScreenPoint current = { x, y };
@@ -202,6 +202,6 @@ void BasicTerminal::write(const char c)
 
 void BasicTerminal::write_pixel(const ScreenPoint& point)
 {
-    const u32 index = point.y * m_ScreenData.pxPerScanline + point.x;
-    m_Buffer[index] = m_TextColor;
+    const usize index = point.y * m_ScreenData.pxPerScanline + point.x;
+    m_Buffer[index]   = m_TextColor;
 }
