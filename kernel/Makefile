@@ -17,9 +17,11 @@ $(CPP_OBJ): .temp/%.o : %.cpp
 	mkdir -p $(dir $@)
 	${CC} ${CFLAGS} -c $(patsubst .temp/%.o, %.cpp, $@) -o $@
 
-.PHONY: all clean
+.PHONY: all clean run
 all: $(CPP_OBJ) $(ASM_OBJ)
 	${LD} ${LDFLAGS} -o ../bin/kernel.elf ${CPP_OBJ} ${ASM_OBJ}
 	mcopy -o -i ../bin/celeste.img ../bin/kernel.elf ::
 clean:
 	rm -r .temp/
+run:
+	qemu-system-x86_64 -pflash ../res/OVMF.fd -cdrom ../bin/celeste.img -s 
