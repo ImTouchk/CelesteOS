@@ -128,7 +128,24 @@ void BasicTerminal::space()
 
 void BasicTerminal::clear_last()
 {
+    /* if x is 0, the last character was on a previous line */
+    if(m_Cursor.x == 0) {
+        m_Cursor.y -= 16;
+        m_Cursor.x = m_ScreenData.pxPerScanline;
+    } else if(m_Cursor.x == 0 && m_Cursor.y == 0) { 
+        /* screen was cleared, nothing to do */
+        return;
+    } else {
+        m_Cursor.x -= 8;
+    }
 
+    ScreenPoint& point = m_Cursor;
+    for(u32 y = point.y; y < (point.y + 16); y++) {
+        for(u32 x = point.x; x < (point.x + 8); x++) {
+            ScreenPoint current = { x, y };
+            write_pixel(current);
+        }
+    }
 }
 
 void BasicTerminal::parse_char(const char c)
