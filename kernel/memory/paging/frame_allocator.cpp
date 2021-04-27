@@ -51,7 +51,7 @@ namespace Memory {
             }
 
             m_Bitmap = Containers::bitmap((byte*)best->pPhysicalAddress, bitmapSize);
-            lock(&m_Bitmap, m_Bitmap.size / 4096 + 1);
+            lock(&m_Bitmap.pBuffer, m_Bitmap.size / 4096 + 1);
         };
 
         auto ReserveMemory = [&]() {
