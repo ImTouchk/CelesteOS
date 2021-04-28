@@ -29,6 +29,13 @@ namespace Interrupt::handlers {
         Interrupt::qwertyKB::handler(scanCode);
         PIC::endMaster();
     }
+
+    __attribute__((interrupt)) void mouseInterrupt(frame* frame)
+    {
+        pTerminal->print("test");
+        byte mouseData = IO::Bus::recieve(0x60);
+        PIC::endSlave();
+    }
 }
 
 namespace Interrupt::PIC {

@@ -39,7 +39,6 @@ extern "C" void KernelMain(Boot::data* bootData)
     Interrupt::specialRegister idtr;
     Interrupt::initialize(memoryRuntime, idtr);
 
-    terminal.print("Hello again!\n");
 //    int* asd = (int*)0x8000000000;
 //    *asd = 99;
 

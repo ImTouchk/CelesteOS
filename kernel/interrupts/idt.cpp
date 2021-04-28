@@ -1,5 +1,6 @@
 #include "idt.hpp"
 #include "interrupts.hpp"
+#include "mouse.hpp"
 #include "io.hpp"
 
 namespace Interrupt {
@@ -34,23 +35,29 @@ namespace Interrupt {
         entry* doubleFault = (entry*)(idtr.offset + 0x8 * sizeof(entry));
         doubleFault->setOffset((usize)handlers::doubleFault);
         doubleFault->typeAttributes = typeAttributes::interruptGate;
-        doubleFault->selector = 0x08;
+        doubleFault->selector       = 0x08;
 
         entry* generalProtFault = (entry*)(idtr.offset + 0xD * sizeof(entry));
         generalProtFault->setOffset((usize)handlers::generalProtFault);
         generalProtFault->typeAttributes = typeAttributes::interruptGate;
-        generalProtFault->selector = 0x08;
+        generalProtFault->selector       = 0x08;
 
         entry* keyboardInter = (entry*)(idtr.offset + 0x21 * sizeof(entry));
         keyboardInter->setOffset((usize)handlers::keyboardInterrupt);
         keyboardInter->typeAttributes = typeAttributes::interruptGate;
-        keyboardInter->selector = 0x08;
+        keyboardInter->selector       = 0x08;
+        
+        entry* mouseInter = (entry*)(idtr.offset + 0x2C * sizeof(entry));
+        mouseInter->setOffset((usize)handlers::mouseInterrupt);
+        mouseInter->typeAttributes = typeAttributes::interruptGate;
+        mouseInter->selector       = 0x08;
 
         __asm("lidt %0" : : "m" (idtr));
-
         Interrupt::remapController();
-        IO::Bus::send(PIC1_DATA, 0b11111101);
-        IO::Bus::send(PIC2_DATA, 0b11111111);
         __asm("sti");
+
+        mouse::initialize();
+        IO::Bus::send(PIC1_DATA, 0b11111001);
+        IO::Bus::send(PIC2_DATA, 0b11101111);
     }
 }

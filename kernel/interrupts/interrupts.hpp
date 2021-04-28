@@ -11,6 +11,7 @@ namespace Interrupt {
         __attribute__((interrupt)) void doubleFault(frame* frame);
         __attribute__((interrupt)) void generalProtFault(frame* frame);
         __attribute__((interrupt)) void keyboardInterrupt(frame* frame);
+        __attribute__((interrupt)) void mouseInterrupt(frame* frame);
     }
 
     constexpr int PIC1_COMMAND = 0x20;
